@@ -1,5 +1,6 @@
 import { Code, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { getSettings } from '../lib/api';
 
 export default function Projects() {
   const [projects, setProjects] = useState<any[]>([
@@ -21,8 +22,7 @@ export default function Projects() {
   const [customHtml, setCustomHtml] = useState<string>('');
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         if (data.featured_html && data.featured_html.trim() !== '') {
            setCustomHtml(data.featured_html);

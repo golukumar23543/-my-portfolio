@@ -1,5 +1,6 @@
 import { ArrowDown, Instagram, Linkedin, Youtube, Twitter } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { getSettings } from '../lib/api';
 
 const RedditIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -15,8 +16,7 @@ export default function Hero() {
   const [profileImage, setProfileImage] = useState('/golu.jpg');
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         if (data.profile_image) {
           setProfileImage(data.profile_image);

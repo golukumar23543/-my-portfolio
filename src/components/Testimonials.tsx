@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { addFeedback } from '../lib/api';
 
 export default function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(1);
@@ -87,12 +88,8 @@ export default function Testimonials() {
             feedback: (form.elements.namedItem('feedback') as HTMLTextAreaElement).value
           };
           try {
-            const res = await fetch('/api/feedback', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
-            if (res.ok) {
+            const res = await addFeedback(data);
+            if (res.success) {
               alert('Thank you for your feedback! It has been submitted directly to Mr. Golu.');
               form.reset();
             } else {

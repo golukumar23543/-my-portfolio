@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash } from 'lucide-react';
+import { getSettings, saveSettings, getFeedbacks, getSessions } from '../lib/api';
 
 export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState('');
@@ -15,12 +16,11 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
     gallery: '[]'
   });
 
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         setSettings((prev: any) => ({
           ...prev,
@@ -33,13 +33,11 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (isAuthenticated) {
       if (activeTab === 'feedbacks') {
-        fetch('/api/feedbacks')
-          .then(res => res.json())
+        getFeedbacks()
           .then(data => setFeedbacks(data))
           .catch(err => console.error(err));
       } else if (activeTab === 'analytics') {
-        fetch('/api/sessions')
-          .then(res => res.json())
+        getSessions()
           .then(data => setSessions(data))
           .catch(err => console.error(err));
       }
@@ -56,24 +54,17 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const handleSave = () => {
-    fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        password,
-        settings
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
+  const handleSave = async () => {
+    try {
+      const res = await saveSettings({ ...settings });
+      if (res.success) {
         window.location.reload();
       } else {
-        setError(data.error || 'Failed to save');
+        setError('Failed to save');
       }
-    })
-    .catch(err => setError('Error saving settings'));
+    } catch(err) {
+      setError('Error saving settings to database. Images size maybe too large.');
+    }
   };
 
   const handleSettingChange = (key: string, value: string) => {

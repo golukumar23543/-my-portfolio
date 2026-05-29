@@ -1,27 +1,27 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
+import { addSession } from '../lib/api';
 
 export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!username) return;
 
     if (mode === 'login' || mode === 'register') {
-      fetch('/api/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      try {
+        await addSession({
           username,
           action: mode === 'register' ? 'REGISTER' : 'LOGIN'
-        })
-      }).then(() => {
+        });
         alert(mode === 'register' ? 'Registration Successful!' : 'Login Successful!');
         onClose();
-      }).catch(err => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       alert('Reset link sent!');
       onClose();

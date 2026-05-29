@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getSettings } from '../lib/api';
 
 export default function Gallery() {
   const [images, setImages] = useState<any[]>([
@@ -6,8 +7,7 @@ export default function Gallery() {
   ]);
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         if (data.gallery) {
           try {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getSettings } from '../lib/api';
 
 export default function Services() {
   const [services, setServices] = useState<any[]>([
@@ -7,8 +8,7 @@ export default function Services() {
   ]);
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         if (data.services) {
           try {

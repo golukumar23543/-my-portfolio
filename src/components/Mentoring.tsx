@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getSettings } from '../lib/api';
 
 export default function Mentoring() {
   const [categories, setCategories] = useState<any[]>([
@@ -20,8 +21,7 @@ export default function Mentoring() {
   ]);
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
+    getSettings()
       .then(data => {
         if (data.mentoring) {
           try {
