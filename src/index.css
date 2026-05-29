@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary-dark: #0a1120;
+  --color-secondary-dark: #111827;
+  --color-card-dark: #121b2b;
+  --color-accent-blue: #38bdf8;
+  --color-accent-blue-hover: #0ea5e9;
+  --color-accent-yellow: #facc15;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-primary-dark);
+  color: white;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.bg-grid {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, #38bdf8, #818cf8);
+}
+
+.light-mode {
+  --color-primary-dark: #f8fafc;
+  --color-secondary-dark: #ffffff;
+  --color-card-dark: #f1f5f9;
+}
+
+.light-mode body {
+  background-color: var(--color-primary-dark);
+  color: #0f172a;
+}
+
+.light-mode .text-white { color: #0f172a !important; }
+.light-mode .text-gray-400 { color: #475569 !important; }
+.light-mode .text-gray-300 { color: #334155 !important; }
+.light-mode .text-gray-500 { color: #64748b !important; }
+.light-mode .bg-white\/5 { background-color: rgba(0,0,0,0.05) !important; color: #0f172a !important; }
+.light-mode .bg-white\/10 { background-color: rgba(0,0,0,0.1) !important; color: #0f172a !important; }
+.light-mode .hover\:bg-white\/5:hover { background-color: rgba(0,0,0,0.1) !important; }
+.light-mode .border-white\/5 { border-color: rgba(0,0,0,0.05) !important; }
+.light-mode .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+.light-mode .border-white\/20 { border-color: rgba(0,0,0,0.15) !important; }
+.light-mode .bg-secondary-dark { background-color: var(--color-secondary-dark) !important; }
