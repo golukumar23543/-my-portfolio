@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash } from 'lucide-react';
-import { getSettings, saveSettings, getFeedbacks, getSessions } from '../lib/api';
+import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2 } from 'lucide-react';
+import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers } from '../lib/api';
 
 export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState('');
@@ -18,6 +18,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
     getSettings()
@@ -39,6 +40,10 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
       } else if (activeTab === 'analytics') {
         getSessions()
           .then(data => setSessions(data))
+          .catch(err => console.error(err));
+      } else if (activeTab === 'users') {
+        getUsers()
+          .then(data => setUsers(data))
           .catch(err => console.error(err));
       }
     }
@@ -205,8 +210,11 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 <Camera size={18} /> Gallery
               </button>
               <div className="h-px bg-white/10 my-4"></div>
+              <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'users' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <UserSquare2 size={18} /> Users Database
+              </button>
               <button onClick={() => setActiveTab('analytics')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'analytics' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Users size={18} /> User Analytics
+                <Users size={18} /> User Sessions
               </button>
               <button onClick={() => setActiveTab('feedbacks')} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'feedbacks' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <div className="flex items-center gap-3"><MessageSquare size={18} /> User Feedbacks</div>
@@ -298,6 +306,42 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                           </div>
                        </div>
                      ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'users' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-white mb-4">Registered Users Database</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {users.length === 0 ? (
+                      <div className="col-span-full p-8 text-center text-gray-500 bg-secondary-dark rounded-xl border border-white/5">
+                        No users have registered yet.
+                      </div>
+                    ) : users.map(user => (
+                      <div key={user.id} className="bg-secondary-dark p-5 rounded-xl border border-white/10 flex gap-4">
+                        {user.photoURL ? (
+                          <img src={user.photoURL} alt="Profile" className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-xl">
+                            {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                             <div>
+                               <h4 className="font-bold text-lg text-white">{user.name}</h4>
+                               <span className="text-xs font-semibold px-2 py-0.5 bg-accent-blue/10 text-accent-blue rounded-md">{user.branch}</span>
+                             </div>
+                             <span className="text-xs text-gray-500">{new Date(user.created_at).toLocaleDateString()}</span>
+                          </div>
+                          <div className="text-sm text-gray-400 space-y-1 mt-2">
+                            <p><strong className="text-gray-300">Email/Phone:</strong> {user.email}</p>
+                            <p><strong className="text-gray-300">Address:</strong> {user.address}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

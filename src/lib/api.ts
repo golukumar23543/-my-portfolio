@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, doc, getDoc, getDocs, setDoc, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, addDoc, query, orderBy, serverTimestamp, where } from 'firebase/firestore';
 
 export async function getSettings() {
   const docRef = doc(db, 'portfolio', 'settings');
@@ -42,4 +42,29 @@ export async function addSession(data: any) {
     timestamp: Date.now()
   });
   return { success: true };
+}
+
+export async function registerUser(data: any) {
+  return upsertUser(data);
+}
+
+export async function upsertUser(data: any) {
+  const q = query(collection(db, 'users'), where('email', '==', data.email));
+  const snap = await getDocs(q);
+  if (snap.empty) {
+    await addDoc(collection(db, 'users'), {
+      ...data,
+      created_at: Date.now()
+    });
+  } else {
+    const docRef = doc(db, 'users', snap.docs[0].id);
+    await setDoc(docRef, data, { merge: true });
+  }
+  return { success: true };
+}
+
+export async function getUsers() {
+  const q = query(collection(db, 'users'), orderBy('created_at', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }

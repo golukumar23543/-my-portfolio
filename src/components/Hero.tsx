@@ -40,8 +40,8 @@ export default function Hero() {
             <span className="text-sm font-medium text-gray-300">Available for Projects & Mentoring</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-extrabold font-heading tracking-tight mb-4 text-white">
-            Hi, I'm <span className="text-accent-blue">Mr.</span> <span className="text-accent-yellow">Golu</span>
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold font-heading tracking-tight mb-4 text-white">
+            Hi, My self <span className="text-accent-blue">Golu</span> <span className="text-accent-yellow">Prajapati</span>
           </h1>
 
           <h2 className="text-2xl lg:text-4xl font-bold text-accent-blue mb-6">
