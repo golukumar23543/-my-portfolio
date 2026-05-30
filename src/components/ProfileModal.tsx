@@ -23,7 +23,27 @@ export default function ProfileModal({ user, onClose }: { user: any, onClose: ()
     if (file) {
       const reader = new FileReader();
       reader.onload = (evt) => {
-        setPhotoURL(evt.target?.result as string);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 256; // Smaller size for profile
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > height && width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          } else if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          setPhotoURL(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.src = evt.target?.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -32,10 +52,14 @@ export default function ProfileModal({ user, onClose }: { user: any, onClose: ()
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateProfile(auth.currentUser!, {
-        displayName,
-        photoURL
-      });
+      const updateData: any = { displayName };
+      // Only set photoURL in FirebaseAuth if it's not a long data URL
+      if (photoURL && !photoURL.startsWith('data:')) {
+        updateData.photoURL = photoURL;
+      }
+
+      await updateProfile(auth.currentUser!, updateData);
+      
       // Import upsertUser to sync profile data with firestore
       const { upsertUser } = await import('../lib/api');
       await upsertUser({
@@ -47,9 +71,9 @@ export default function ProfileModal({ user, onClose }: { user: any, onClose: ()
 
       alert('Profile updated successfully!');
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Failed to update profile');
+      alert('Failed to update profile: ' + (error.message || 'Unknown error'));
     } finally {
       setSaving(false);
     }

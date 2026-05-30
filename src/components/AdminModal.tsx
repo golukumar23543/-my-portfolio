@@ -19,6 +19,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
   useEffect(() => {
     getSettings()
@@ -33,21 +34,12 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (activeTab === 'feedbacks') {
-        getFeedbacks()
-          .then(data => setFeedbacks(data))
-          .catch(err => console.error(err));
-      } else if (activeTab === 'analytics') {
-        getSessions()
-          .then(data => setSessions(data))
-          .catch(err => console.error(err));
-      } else if (activeTab === 'users') {
-        getUsers()
-          .then(data => setUsers(data))
-          .catch(err => console.error(err));
-      }
+      // Load all data when authenticated so it's ready for cross-referencing
+      getFeedbacks().then(data => setFeedbacks(data)).catch(console.error);
+      getSessions().then(data => setSessions(data)).catch(console.error);
+      getUsers().then(data => setUsers(data)).catch(console.error);
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated]);
 
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
@@ -158,7 +150,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="bg-secondary-dark border border-white/10 rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col relative shadow-2xl overflow-hidden">
+      <div className="bg-secondary-dark border border-white/10 rounded-[2rem] w-full max-w-[1400px] h-[95vh] max-h-[900px] flex flex-col relative shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10 bg-black/20">
@@ -310,38 +302,97 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              {activeTab === 'users' && (
+              {activeTab === 'users' && !selectedUser && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white mb-4">Registered Users Database</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h3 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-4">Registered Users Database</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {users.length === 0 ? (
-                      <div className="col-span-full p-8 text-center text-gray-500 bg-secondary-dark rounded-xl border border-white/5">
+                      <div className="col-span-full p-12 text-center text-gray-500 bg-secondary-dark rounded-xl border border-white/5 text-lg">
                         No users have registered yet.
                       </div>
                     ) : users.map(user => (
-                      <div key={user.id} className="bg-secondary-dark p-5 rounded-xl border border-white/10 flex gap-4">
-                        {user.photoURL ? (
-                          <img src={user.photoURL} alt="Profile" className="w-12 h-12 rounded-full object-cover border border-white/10" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-xl">
-                            {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                      <div key={user.id} onClick={() => setSelectedUser(user)} className="bg-secondary-dark p-6 rounded-2xl border border-white/10 hover:border-accent-blue/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-xl group">
+                        <div className="flex items-center gap-4 mb-4">
+                          {user.photoURL ? (
+                            <img src={user.photoURL} alt="Profile" className="w-16 h-16 rounded-full object-cover border-2 border-white/10 group-hover:border-accent-blue transition-colors" />
+                          ) : (
+                            <div className="w-16 h-16 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-2xl border-2 border-transparent group-hover:border-accent-blue transition-colors">
+                              {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <div className="flex-1 overflow-hidden">
+                            <h4 className="font-bold text-lg text-white truncate">{user.name}</h4>
+                            <span className="text-xs font-bold px-2.5 py-1 bg-accent-blue/10 text-accent-blue rounded-lg inline-block mt-1">{user.branch}</span>
                           </div>
-                        )}
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-2">
-                             <div>
-                               <h4 className="font-bold text-lg text-white">{user.name}</h4>
-                               <span className="text-xs font-semibold px-2 py-0.5 bg-accent-blue/10 text-accent-blue rounded-md">{user.branch}</span>
-                             </div>
-                             <span className="text-xs text-gray-500">{new Date(user.created_at).toLocaleDateString()}</span>
-                          </div>
-                          <div className="text-sm text-gray-400 space-y-1 mt-2">
-                            <p><strong className="text-gray-300">Email/Phone:</strong> {user.email}</p>
-                            <p><strong className="text-gray-300">Address:</strong> {user.address}</p>
-                          </div>
+                        </div>
+                        <div className="text-sm text-gray-400 space-y-2 mt-4 pt-4 border-t border-white/5">
+                          <p className="flex items-center gap-2 truncate"><strong className="text-gray-300">Email:</strong> {user.email}</p>
+                          <p className="flex items-center gap-2 truncate"><strong className="text-gray-300">Address:</strong> {user.address}</p>
+                          <p className="text-xs text-gray-500 mt-2">Registered: {new Date(user.created_at).toLocaleDateString()}</p>
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'users' && selectedUser && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 border-b border-white/10 pb-6">
+                    <button onClick={() => setSelectedUser(null)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-white transition-colors">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <div className="flex items-center gap-4">
+                      {selectedUser.photoURL ? (
+                        <img src={selectedUser.photoURL} alt="Profile" className="w-14 h-14 rounded-full object-cover border-2 border-white/10" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-xl">
+                          {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-2xl font-bold text-white leading-tight">{selectedUser.name}</h3>
+                        <p className="text-accent-blue font-medium text-sm">{selectedUser.email}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                     <div className="bg-secondary-dark p-6 rounded-2xl border border-white/10">
+                        <span className="text-gray-500 block text-sm font-semibold uppercase mb-1">Branch/Role</span>
+                        <span className="text-white font-medium text-lg">{selectedUser.branch}</span>
+                     </div>
+                     <div className="bg-secondary-dark p-6 rounded-2xl border border-white/10">
+                        <span className="text-gray-500 block text-sm font-semibold uppercase mb-1">Address</span>
+                        <span className="text-white font-medium text-lg">{selectedUser.address}</span>
+                     </div>
+                     <div className="bg-secondary-dark p-6 rounded-2xl border border-white/10">
+                        <span className="text-gray-500 block text-sm font-semibold uppercase mb-1">Total Activities</span>
+                        <span className="text-white font-medium text-lg">{sessions.filter(s => s.username === selectedUser.email || s.username === selectedUser.uid).length} events</span>
+                     </div>
+                  </div>
+
+                  <h4 className="text-lg font-bold text-white mb-4">Activity Timeline</h4>
+                  <div className="bg-secondary-dark rounded-2xl border border-white/10 p-2">
+                    <ul className="space-y-2 p-4">
+                      {sessions
+                        .filter(s => s.username === selectedUser.email || s.username === selectedUser.uid)
+                        .sort((a, b) => b.timestamp - a.timestamp)
+                        .map((s, idx) => (
+                           <li key={idx} className="flex gap-4 p-4 hover:bg-white/5 rounded-xl transition-colors">
+                              <div className="flex-shrink-0 mt-1">
+                                <div className="w-3 h-3 rounded-full bg-accent-blue ring-4 ring-accent-blue/20"></div>
+                              </div>
+                              <div>
+                                <p className="text-white font-medium">{s.action}</p>
+                                <p className="text-xs text-gray-500 mt-1">{new Date(s.timestamp).toLocaleString()}</p>
+                              </div>
+                           </li>
+                        ))}
+                      {sessions.filter(s => s.username === selectedUser.email || s.username === selectedUser.uid).length === 0 && (
+                        <li className="text-gray-500 p-4 text-center">No recent activity found for this user.</li>
+                      )}
+                    </ul>
                   </div>
                 </div>
               )}

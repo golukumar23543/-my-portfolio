@@ -3,8 +3,69 @@ import { getSettings } from '../lib/api';
 
 export default function Services() {
   const [services, setServices] = useState<any[]>([
-    { title: 'Website Dev', desc: 'Full-stack custom websites', image: '', price: 'Contact', link: '#' },
-    { title: 'Digital Growth', desc: 'Zero to growth strategy', image: '', price: 'Contact', link: '#' },
+    { 
+      title: 'Full-Stack Development', 
+      desc: 'End-to-end custom web applications with React, Next.js, and modern backend architectures.', 
+      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=400', 
+      price: 'Starts at $999', 
+      link: '#' 
+    },
+    { 
+      title: 'UI/UX Design', 
+      desc: 'Pixel-perfect, user-centric interfaces designed in Figma to maximize engagement.', 
+      image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&h=400', 
+      price: 'Starts at $499', 
+      link: '#' 
+    },
+    { 
+      title: 'Mobile App Development', 
+      desc: 'Cross-platform mobile applications for iOS and Android using React Native.', 
+      image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=400', 
+      price: 'Starts at $1499', 
+      link: '#' 
+    },
+    { 
+      title: 'Backend & Cloud DevOps', 
+      desc: 'Scalable infrastructure, serverless deployments, and database architecture on AWS/Firebase.', 
+      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&h=400', 
+      price: 'Starts at $799', 
+      link: '#' 
+    },
+    {
+      title: 'AI & Machine Learning Int.',
+      desc: 'Implement OpenAI, Gemini, or custom LLMs directly into your applications to build intelligent features.',
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&h=400',
+      price: 'Starts at $1199',
+      link: '#'
+    },
+    {
+      title: 'E-Commerce Solutions',
+      desc: 'High-conversion online stores with custom payment gateways, inventory management, and marketing tools.',
+      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=400',
+      price: 'Starts at $899',
+      link: '#'
+    },
+    {
+      title: 'Technical Consulting',
+      desc: 'Expert guidance on software architecture, technology stack selection, and cloud migration strategies.',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&h=400',
+      price: 'Starts at $249',
+      link: '#'
+    },
+    {
+      title: 'Custom CMS Solutions',
+      desc: 'Headless CMS implementations using Sanity or Strapi tailored for your marketing team\'s workflow.',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=400',
+      price: 'Starts at $699',
+      link: '#'
+    },
+    {
+      title: 'MVP Prototyping',
+      desc: 'Rapid development of Minimum Viable Products for startups to test ideas and secure funding quickly.',
+      image: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&h=400',
+      price: 'Starts at $1999',
+      link: '#'
+    }
   ]);
 
   useEffect(() => {
