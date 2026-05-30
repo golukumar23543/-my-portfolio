@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, doc, getDoc, getDocs, setDoc, addDoc, query, orderBy, serverTimestamp, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, addDoc, query, orderBy, serverTimestamp, where, increment, deleteDoc } from 'firebase/firestore';
 
 export async function getSettings() {
   const docRef = doc(db, 'portfolio', 'settings');
@@ -31,7 +31,8 @@ export async function addFeedback(data: any) {
 }
 
 export async function getSessions() {
-  const q = query(collection(db, 'sessions'), orderBy('timestamp', 'desc'));
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const q = query(collection(db, 'sessions'), where('timestamp', '>=', oneDayAgo), orderBy('timestamp', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
@@ -44,11 +45,58 @@ export async function addSession(data: any) {
   return { success: true };
 }
 
+export async function trackPageView() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const docRef = doc(db, 'page_views', today);
+    await setDoc(docRef, { count: increment(1) }, { merge: true });
+  } catch (error) {
+    console.error('Failed to track page view', error);
+  }
+}
+
+export async function getPageViews() {
+  const q = query(collection(db, 'page_views'));
+  const snap = await getDocs(q);
+  const views = snap.docs.map(doc => ({ date: doc.id, count: doc.data().count }));
+  const total = views.reduce((sum, v) => sum + v.count, 0);
+  return { views: views.sort((a,b) => b.date.localeCompare(a.date)), total };
+}
+
 export async function registerUser(data: any) {
   return upsertUser(data);
 }
 
+export async function deleteUser(uid: string) {
+  try {
+    const docRef = doc(db, 'users', uid);
+    await deleteDoc(docRef);
+    return { success: true };
+  } catch (err) {
+    console.error(err);
+    return { success: false };
+  }
+}
+
+export async function getUserProfile(email: string | null | undefined, uid: string) {
+  let q;
+  if (email && email.trim() !== '') {
+    q = query(collection(db, 'users'), where('email', '==', email));
+  } else if (uid) {
+    q = query(collection(db, 'users'), where('uid', '==', uid));
+  } else {
+    return null;
+  }
+  
+  const snap = await getDocs(q);
+  if (!snap.empty) {
+    return { id: snap.docs[0].id, ...(snap.docs[0].data() as any) };
+  }
+  return null;
+}
+
 export async function upsertUser(data: any) {
+
   const q = query(collection(db, 'users'), where('email', '==', data.email));
   const snap = await getDocs(q);
   if (snap.empty) {
@@ -68,3 +116,4 @@ export async function getUsers() {
   const snap = await getDocs(q);
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
+

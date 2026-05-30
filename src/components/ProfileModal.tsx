@@ -2,8 +2,9 @@ import { useState, useRef } from 'react';
 import { X, Camera, LogOut } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
+import { motion } from 'motion/react';
 
-export default function ProfileModal({ user, onClose }: { user: any, onClose: () => void }) {
+export default function ProfileModal({ user, onClose, onUpdate }: { user: any, onClose: () => void, onUpdate?: (user: any) => void }) {
   const [photoURL, setPhotoURL] = useState(user?.photoURL || '');
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [saving, setSaving] = useState(false);
@@ -69,6 +70,8 @@ export default function ProfileModal({ user, onClose }: { user: any, onClose: ()
         uid: user?.uid
       });
 
+      if (onUpdate) onUpdate(auth.currentUser);
+
       alert('Profile updated successfully!');
       onClose();
     } catch (error: any) {
@@ -92,13 +95,25 @@ export default function ProfileModal({ user, onClose }: { user: any, onClose: ()
 
         {/* Avatar Setup */}
         <div className="relative mb-6">
-          <div className="w-24 h-24 rounded-full border-2 border-accent-blue overflow-hidden bg-primary-dark flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.2)]">
+          <motion.div 
+            initial={{ scale: 0 }} 
+            animate={{ scale: 1 }} 
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="w-24 h-24 rounded-full border-2 border-accent-blue overflow-hidden bg-primary-dark flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+          >
             {photoURL ? (
-              <img src={photoURL} alt="Profile" className="w-full h-full object-cover" />
+              <motion.img 
+                key={photoURL}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                src={photoURL} 
+                alt="Profile" 
+                className="w-full h-full object-cover" 
+              />
             ) : (
               <span className="text-3xl font-bold text-gray-400">{displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}</span>
             )}
-          </div>
+          </motion.div>
           <button 
             onClick={() => fileInputRef.current?.click()}
             className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-accent-blue text-primary-dark flex items-center justify-center hover:scale-110 transition-transform shadow-lg"

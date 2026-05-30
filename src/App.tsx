@@ -14,7 +14,7 @@ import ProfileModal from './components/ProfileModal';
 import { useState, useEffect } from 'react';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { addSession } from './lib/api';
+import { addSession, trackPageView } from './lib/api';
 
 export default function App() {
   const [theme, setTheme] = useState('dark');
@@ -24,6 +24,11 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
+  useEffect(() => {
+    // Increment page view on load
+    trackPageView();
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -52,10 +57,27 @@ export default function App() {
   }, [user]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    let isMounted = true;
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Optimistic UI update with auth state
+        if (isMounted) setUser(currentUser);
+        
+        // Fetch extended attributes from Firestore
+        const { getUserProfile } = await import('./lib/api');
+        const dbUser = await getUserProfile(currentUser.email, currentUser.uid);
+        if (dbUser && isMounted) {
+          // Merge auth user with db user (specifically for custom photoURL from our canvas logic)
+          setUser({ ...currentUser, photoURL: dbUser.photoURL || currentUser.photoURL, displayName: dbUser.name || currentUser.displayName, branch: dbUser.branch || '', address: dbUser.address || '' });
+        }
+      } else {
+        if (isMounted) setUser(null);
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -90,7 +112,7 @@ export default function App() {
       
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
       {isAdminOpen && <AdminModal onClose={() => setIsAdminOpen(false)} />}
-      {isProfileOpen && <ProfileModal user={user} onClose={() => setIsProfileOpen(false)} />}
+      {isProfileOpen && <ProfileModal user={user} onClose={() => setIsProfileOpen(false)} onUpdate={(updatedUser) => setUser({...updatedUser})} />}
     </div>
   );
 }

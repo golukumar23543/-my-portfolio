@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2 } from 'lucide-react';
-import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers } from '../lib/api';
+import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2, Activity } from 'lucide-react';
+import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers, getPageViews, deleteUser } from '../lib/api';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState('');
@@ -19,6 +20,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [pageViewsData, setPageViewsData] = useState<{views: any[], total: number}>({ views: [], total: 0 });
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
       getFeedbacks().then(data => setFeedbacks(data)).catch(console.error);
       getSessions().then(data => setSessions(data)).catch(console.error);
       getUsers().then(data => setUsers(data)).catch(console.error);
+      getPageViews().then(data => setPageViewsData(data)).catch(console.error);
     }
   }, [isAuthenticated]);
 
@@ -208,6 +211,9 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
               <button onClick={() => setActiveTab('analytics')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'analytics' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Users size={18} /> User Sessions
               </button>
+              <button onClick={() => setActiveTab('traffic')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'traffic' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <Activity size={18} /> Web Traffic
+              </button>
               <button onClick={() => setActiveTab('feedbacks')} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'feedbacks' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <div className="flex items-center gap-3"><MessageSquare size={18} /> User Feedbacks</div>
               </button>
@@ -338,23 +344,42 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
               {activeTab === 'users' && selectedUser && (
                 <div className="space-y-6">
-                  <div className="flex items-center gap-4 border-b border-white/10 pb-6">
-                    <button onClick={() => setSelectedUser(null)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-white transition-colors">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                    </button>
+                  <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
                     <div className="flex items-center gap-4">
-                      {selectedUser.photoURL ? (
-                        <img src={selectedUser.photoURL} alt="Profile" className="w-14 h-14 rounded-full object-cover border-2 border-white/10" />
-                      ) : (
-                        <div className="w-14 h-14 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-xl">
-                          {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
+                      <button onClick={() => setSelectedUser(null)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-white transition-colors">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                      </button>
+                      <div className="flex items-center gap-4">
+                        {selectedUser.photoURL ? (
+                          <img src={selectedUser.photoURL} alt="Profile" className="w-14 h-14 rounded-full object-cover border-2 border-white/10" />
+                        ) : (
+                          <div className="w-14 h-14 rounded-full bg-accent-blue/10 text-accent-blue flex items-center justify-center font-bold text-xl">
+                            {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="text-2xl font-bold text-white leading-tight">{selectedUser.name}</h3>
+                          <p className="text-accent-blue font-medium text-sm">{selectedUser.email}</p>
                         </div>
-                      )}
-                      <div>
-                        <h3 className="text-2xl font-bold text-white leading-tight">{selectedUser.name}</h3>
-                        <p className="text-accent-blue font-medium text-sm">{selectedUser.email}</p>
                       </div>
                     </div>
+                    <button 
+                      onClick={async () => {
+                        if (confirm(`Are you sure you want to delete ${selectedUser.name || selectedUser.email}'s data?`)) {
+                          const res = await deleteUser(selectedUser.id);
+                          if (res.success) {
+                            setUsers(users.filter(u => u.id !== selectedUser.id));
+                            setSelectedUser(null);
+                            alert('User deleted successfully.');
+                          } else {
+                            alert('Failed to delete user.');
+                          }
+                        }
+                      }}
+                      className="bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-red-500/20"
+                    >
+                      <Trash size={16} /> Delete Data
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -421,6 +446,60 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                                </span>
                             </td>
                             <td className="px-6 py-4 text-xs">{new Date(s.timestamp).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'traffic' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <h3 className="text-xl font-bold text-white">Daily Web Traffic</h3>
+                    <div className="bg-accent-blue/10 text-accent-blue px-4 py-2 rounded-xl border border-accent-blue/20 font-bold">
+                       Total Views: {pageViewsData.total.toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  {pageViewsData.views.length > 0 ? (
+                    <div className="w-full h-[300px] bg-secondary-dark border border-white/10 rounded-2xl p-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={[...pageViewsData.views].reverse()} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#ffffff15" vertical={false} />
+                          <XAxis dataKey="date" stroke="#ffffff50" fontSize={12} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#ffffff50" fontSize={12} tickLine={false} axisLine={false} />
+                          <Tooltip 
+                            cursor={{ fill: '#ffffff0a' }}
+                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#ffffff20', borderRadius: '12px' }}
+                            itemStyle={{ color: '#38bdf8', fontWeight: 'bold' }}
+                          />
+                          <Bar dataKey="count" fill="#38bdf8" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : null}
+
+                  <div className="bg-secondary-dark rounded-xl border border-white/10 overflow-hidden mt-4">
+                    <table className="w-full text-left text-sm text-gray-400">
+                      <thead className="bg-white/5 text-white/80 uppercase text-xs">
+                        <tr>
+                          <th className="px-6 py-4 font-semibold">Date</th>
+                          <th className="px-6 py-4 font-semibold">Page Views</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {pageViewsData.views.length === 0 ? (
+                           <tr><td colSpan={2} className="px-6 py-8 text-center text-gray-500">No traffic data available yet.</td></tr>
+                        ) : pageViewsData.views.map((v: any, idx: number) => (
+                          <tr key={idx} className="hover:bg-white/5 transition-colors">
+                            <td className="px-6 py-4 font-medium text-white">{v.date}</td>
+                            <td className="px-6 py-4">
+                               <div className="flex items-center gap-3">
+                                 <span className="font-bold text-accent-blue">{v.count.toLocaleString()}</span>
+                               </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>

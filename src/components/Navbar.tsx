@@ -1,5 +1,6 @@
 import { Sun, MessageCircle, User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { motion } from 'motion/react';
 
 export default function Navbar({ toggleTheme, theme, onLoginClick, onAdminClick, user }: { toggleTheme?: () => void, theme?: string, onLoginClick?: () => void, onAdminClick?: () => void, user?: any }) {
   const links = ['Home', 'About', 'Developer', 'Learning Hub', 'Services', 'Gallery', 'Contact'];
@@ -57,7 +58,16 @@ export default function Navbar({ toggleTheme, theme, onLoginClick, onAdminClick,
           </a>
           <button onClick={onLoginClick} className="flex items-center gap-1.5 md:gap-2 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-semibold px-3 py-2 md:px-6 md:py-2.5 rounded-full transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)]">
             {user?.photoURL ? (
-              <img src={user.photoURL} alt="Profile" className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover" />
+              <motion.img 
+                key={user.photoURL}
+                initial={{ scale: 0, opacity: 0, rotate: -90 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                whileHover={{ scale: 1.15, rotate: 5 }}
+                src={user.photoURL} 
+                alt="Profile" 
+                className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover shadow-[0_0_10px_rgba(56,189,248,0.6)] border border-accent-blue/50" 
+              />
             ) : (
               <User size={16} className="md:w-[18px] md:h-[18px]" />
             )}

@@ -1,4 +1,6 @@
 import { ArrowRight, MessageCircle, Linkedin, Youtube, Instagram, Twitter, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { getPageViews } from '../lib/api';
 
 const RedditIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -10,6 +12,14 @@ const RedditIcon = ({ size = 24 }: { size?: number }) => (
 );
 
 export default function Footer() {
+  const [pageViews, setPageViews] = useState<number>(0);
+
+  useEffect(() => {
+    getPageViews().then(data => {
+      setPageViews(data.total);
+    }).catch(console.error);
+  }, []);
+
   return (
     <footer className="w-full bg-secondary-dark/50 border-t border-white/5 pt-16 mt-12 pb-8">
       {/* Top Banner */}
@@ -127,9 +137,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
         <p>© 2026 <span className="text-accent-blue hover:underline cursor-pointer">Mr. Golu</span> . All rights reserved.</p>
         
-        <div className="flex items-center gap-2 border border-white/10 bg-black/20 rounded-full px-4 py-1.5 border-dashed">
+        <div className="flex items-center gap-2 border border-white/10 bg-black/20 rounded-full px-4 py-1.5 border-dashed transition-colors hover:border-accent-blue/50">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          1,200 total page views
+          {pageViews.toLocaleString() || '...'} total page views
         </div>
 
         <p className="flex items-center gap-1">
