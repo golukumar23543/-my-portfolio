@@ -87,34 +87,61 @@ export default function Hero() {
 
         {/* Right Image/Graphic */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex-1 flex justify-center lg:justify-end w-full max-w-md lg:max-w-none relative"
+          transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 100 }}
+          className="flex-1 flex justify-center lg:justify-end w-full max-w-md lg:max-w-none relative mt-12 lg:mt-0"
         >
           {/* Decorative outer rings */}
           <div className="relative w-[320px] h-[320px] md:w-[450px] md:h-[450px]">
-            <div className="absolute inset-0 rounded-full ring-1 ring-accent-blue/30 shadow-[0_0_80px_rgba(34,211,238,0.15)] animate-[spin_10s_linear_infinite]" />
-            <div className="absolute inset-4 rounded-full ring-1 ring-white/10" />
-            <div className="absolute inset-8 rounded-full border-4 border-primary-dark overflow-hidden bg-secondary-dark z-10 flex items-center justify-center">
-               <div className="text-6xl font-bold font-heading text-accent-yellow scale-[2] opacity-20 absolute z-0">G</div>
-               <img 
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-[3px] border-dashed border-accent-blue/40 shadow-[0_0_80px_rgba(56,189,248,0.2)]" 
+            />
+            <motion.div 
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+              className="absolute inset-5 rounded-full border-2 border-dotted border-white/20" 
+            />
+            
+            <motion.div 
+              animate={{ y: [-15, 15, -15] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              className="absolute inset-8 rounded-full border-4 border-primary-dark overflow-hidden bg-secondary-dark z-10 flex items-center justify-center shadow-[0_0_50px_rgba(56,189,248,0.4)]"
+            >
+               <div className="text-[12rem] font-bold font-heading text-accent-blue blur-sm opacity-20 absolute z-0">G</div>
+               <motion.img 
+                 whileHover={{ scale: 1.15 }}
+                 transition={{ duration: 0.5, ease: "easeOut" }}
                  src={profileImage} 
                  alt="Mr. Golu"
-                 className="w-full h-full object-cover relative z-10"
+                 className="w-full h-full object-cover relative z-10 cursor-pointer"
                />
-            </div>
+            </motion.div>
 
             {/* Floating Badges */}
-            <div className="absolute top-10 -left-6 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50">
-              <span>🎓</span> <span className="text-sm font-bold">Diploma CSE</span>
-            </div>
-            <div className="absolute bottom-1/4 -right-10 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50">
-              <span>💻</span> <span className="text-sm font-bold">Web Developer</span>
-            </div>
-            <div className="absolute bottom-4 left-4 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50">
-              <span>🚀</span> <span className="text-sm font-bold">NSIT</span>
-            </div>
+            <motion.div 
+              animate={{ y: [-5, 5, -5], rotate: [-2, 2, -2] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 }}
+              className="absolute top-10 -left-6 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50"
+            >
+              <span className="text-xl">🎓</span> <span className="text-sm font-bold text-white">Diploma CSE</span>
+            </motion.div>
+            <motion.div 
+              animate={{ y: [5, -5, 5], rotate: [2, -2, 2] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+              className="absolute bottom-1/4 -right-10 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50"
+            >
+              <span className="text-xl">💻</span> <span className="text-sm font-bold text-white">Web Developer</span>
+            </motion.div>
+            <motion.div 
+              animate={{ y: [-8, 8, -8] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
+              className="absolute bottom-4 left-4 z-20 bg-secondary-dark/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 shadow-xl shadow-black/50"
+            >
+              <span className="text-xl">🚀</span> <span className="text-sm font-bold text-white">NSIT</span>
+            </motion.div>
           </div>
         </motion.div>
 

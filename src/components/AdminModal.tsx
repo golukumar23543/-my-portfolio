@@ -189,35 +189,36 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* Sidebar */}
-            <div className="w-64 border-r border-white/10 bg-black/10 p-4 space-y-2 overflow-y-auto">
-              <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'settings' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+            <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-black/10 p-2 md:p-4 flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto shrink-0 snap-x">
+              <button onClick={() => setActiveTab('settings')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'settings' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <ImageIcon size={18} /> Profile Image
               </button>
-              <button onClick={() => setActiveTab('projects')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'projects' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('projects')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'projects' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Briefcase size={18} /> Featured Work
               </button>
-              <button onClick={() => setActiveTab('services')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'services' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('services')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'services' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Layers size={18} /> Services
               </button>
-              <button onClick={() => setActiveTab('gallery')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'gallery' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('gallery')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'gallery' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Camera size={18} /> Gallery
               </button>
-              <div className="h-px bg-white/10 my-4"></div>
-              <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'users' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <div className="hidden md:block h-px bg-white/10 my-4 shrink-0"></div>
+              <button onClick={() => setActiveTab('users')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'users' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <UserSquare2 size={18} /> Users Database
               </button>
-              <button onClick={() => setActiveTab('analytics')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'analytics' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('analytics')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'analytics' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Users size={18} /> User Sessions
               </button>
-              <button onClick={() => setActiveTab('traffic')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'traffic' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('traffic')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'traffic' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Activity size={18} /> Web Traffic
               </button>
-              <button onClick={() => setActiveTab('feedbacks')} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === 'feedbacks' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button onClick={() => setActiveTab('feedbacks')} className={`shrink-0 w-auto md:w-full flex items-center justify-between px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'feedbacks' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <div className="flex items-center gap-3"><MessageSquare size={18} /> User Feedbacks</div>
               </button>
             </div>
+
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6 bg-primary-dark/30">

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { getSettings } from '../lib/api';
+import { X } from 'lucide-react';
 
 export default function Gallery() {
   const [images, setImages] = useState<any[]>([
     { url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&h=400', caption: 'Coding session' }
   ]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     getSettings()
@@ -23,30 +25,53 @@ export default function Gallery() {
   if (images.length === 0) return null;
 
   return (
-    <section id="gallery" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-      <div className="mb-16">
-        <div className="inline-flex items-center gap-2 bg-secondary-dark border border-white/10 rounded-full px-4 py-1.5 mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>
-          <span className="text-xs font-semibold tracking-wider text-accent-blue uppercase">Gallery</span>
-        </div>
-        <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4">
-          Visual <span className="text-accent-yellow">Journey</span>
-        </h2>
-        <div className="w-16 h-1 bg-accent-blue mt-6"></div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {images.map((img, i) => (
-          <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/10 shadow-lg cursor-pointer">
-            <img src={img.url} alt={img.caption || 'Gallery Image'} className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
-            {img.caption && (
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <span className="text-white font-medium">{img.caption}</span>
-              </div>
-            )}
+    <>
+      <section id="gallery" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="mb-16">
+          <div className="inline-flex items-center gap-2 bg-secondary-dark border border-white/10 rounded-full px-4 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>
+            <span className="text-xs font-semibold tracking-wider text-accent-blue uppercase">Gallery</span>
           </div>
-        ))}
-      </div>
-    </section>
+          <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4">
+            Visual <span className="text-accent-yellow">Journey</span>
+          </h2>
+          <div className="w-16 h-1 bg-accent-blue mt-6"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {images.map((img, i) => (
+            <div key={i} onClick={() => setSelectedImage(img.url)} className="group relative rounded-2xl overflow-hidden border border-white/10 shadow-lg cursor-pointer">
+              <img src={img.url} alt={img.caption || 'Gallery Image'} className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
+              {img.caption && (
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <span className="text-white font-medium">{img.caption}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Lightbox / Zoom Overlay */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 cursor-zoom-out"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-all"
+            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+          >
+            <X size={24} />
+          </button>
+          <img 
+            src={selectedImage} 
+            alt="Zoomed view" 
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl scale-100 cursor-default"
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
+    </>
   );
 }

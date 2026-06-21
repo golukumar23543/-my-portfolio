@@ -280,11 +280,11 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           </>
         )}
 
-        <div className="mt-6 text-center text-sm text-gray-400 border-t border-white/5 pt-4">
+        <div className="mt-6 text-center text-sm text-gray-400 border-t border-white/5 pt-5 pb-2">
           {mode === 'login' ? (
-            <p>Don't have a profile? <button onClick={() => setMode('register')} className="text-accent-blue hover:underline font-semibold">Create one here</button></p>
+            <p>Don't have a profile? <button type="button" onClick={(e) => { e.preventDefault(); setMode('register'); }} className="text-accent-blue hover:text-accent-blue-hover hover:underline font-bold ml-1 transition-all">Create one here</button></p>
           ) : (
-            <p>Back to <button onClick={() => setMode('login')} className="text-accent-blue hover:underline font-semibold">Login</button></p>
+            <p>Back to <button type="button" onClick={(e) => { e.preventDefault(); setMode('login'); }} className="text-accent-blue hover:text-accent-blue-hover hover:underline font-bold ml-1 transition-all">Login</button></p>
           )}
         </div>
       </div>
