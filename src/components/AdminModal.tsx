@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2, Activity } from 'lucide-react';
-import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers, getPageViews, deleteUser } from '../lib/api';
+import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers, getPageViews, deleteUser, deleteFeedback } from '../lib/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 export default function AdminModal({ onClose }: { onClose: () => void }) {
@@ -114,6 +114,36 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
     }
   };
 
+  const handleProjectAdd = () => {
+    let current = [];
+    try { current = JSON.parse(settings.featured_work || '[]'); } catch(e){}
+    current.push({ title: 'New Project', type: 'WEB', description: 'Description', tags: [], image: '', codeLink: '', liveLink: '' });
+    handleSettingChange('featured_work', JSON.stringify(current));
+  };
+
+  const updateProject = (index: number, field: string, value: any) => {
+    let current = [];
+    try { current = JSON.parse(settings.featured_work || '[]'); } catch(e){}
+    current[index][field] = value;
+    handleSettingChange('featured_work', JSON.stringify(current));
+  };
+
+  const removeProject = (index: number) => {
+    let current = [];
+    try { current = JSON.parse(settings.featured_work || '[]'); } catch(e){}
+    current.splice(index, 1);
+    handleSettingChange('featured_work', JSON.stringify(current));
+  };
+
+  const updateProjectImage = (e: any, index: number) => {
+    const file = e.target.files[0];
+    if (file) {
+      compressImage(file, (compressedBase64) => {
+        updateProject(index, 'image', compressedBase64);
+      });
+    }
+  };
+
   const handleServiceAdd = () => {
     let current = [];
     try { current = JSON.parse(settings.services || '[]'); } catch(e){}
@@ -161,7 +191,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
             <Settings size={20} className="text-accent-blue" />
             Admin Dashboard
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors active:scale-95">
             <X size={20} />
           </button>
         </div>
@@ -182,7 +212,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                   />
                   {error && <p className="text-red-400 text-sm mt-2 font-medium bg-red-400/10 p-2 rounded-lg">{error}</p>}
                 </div>
-                <button className="w-full bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-accent-blue/20">
+                <button className="w-full bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-accent-blue/20 active:scale-95">
                   Authenticate required
                 </button>
               </form>
@@ -196,7 +226,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 <ImageIcon size={18} /> Profile Image
               </button>
               <button onClick={() => setActiveTab('projects')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'projects' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Briefcase size={18} /> Featured Work
+                <Briefcase size={18} /> My Projects
               </button>
               <button onClick={() => setActiveTab('services')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'services' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Layers size={18} /> Services
@@ -243,16 +273,47 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
               )}
 
               {activeTab === 'projects' && (
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-white">Custom Featured Work (HTML/Code UI)</label>
-                  <p className="text-gray-400 text-xs mb-2">Design any custom layouts directly using HTML (Tailwind is loaded globally).</p>
-                  <textarea 
-                    value={settings.featured_html || ''}
-                    onChange={(e) => handleSettingChange('featured_html', e.target.value)}
-                    placeholder="<div className='flex gap-4'><h1>My Custom Code</h1></div>"
-                    className="w-full h-[400px] bg-[#0d1117] border border-white/10 rounded-xl p-4 text-green-400 focus:outline-none focus:border-accent-blue font-mono text-sm resize-none whitespace-pre shadow-inner leading-relaxed overflow-auto block" 
-                  />
-                  <p className="text-xs text-gray-500">If left empty, the default UI configuration for featured products will be shown.</p>
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <label className="block text-sm font-medium text-white">Manage My Projects</label>
+                    <button onClick={handleProjectAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all active:scale-95">
+                      <Plus size={16} /> Add Project
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(JSON.parse(settings.featured_work || '[]')).map((proj: any, i: number) => (
+                      <div key={i} className="bg-secondary-dark p-4 rounded-xl border border-white/10 relative flex flex-col gap-2">
+                         <button onClick={() => removeProject(i)} className="absolute top-4 right-4 text-red-400 hover:text-red-300 z-10 bg-black/50 p-1.5 rounded-full"><Trash size={16} /></button>
+                         <div className="mb-2">
+                           <div className="h-32 w-full bg-primary-dark border border-dashed border-white/20 rounded-lg flex items-center justify-center cursor-pointer hover:border-accent-blue overflow-hidden relative" onClick={() => document.getElementById(`proj-img-${i}`)?.click()}>
+                             <input type="file" id={`proj-img-${i}`} className="hidden" accept="image/*" onChange={(e) => updateProjectImage(e, i)} />
+                             {proj.image ? <img src={proj.image} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center"><Plus size={24} className="text-gray-500 mb-1" /><span className="text-xs text-gray-500">Project Image</span></div>}
+                           </div>
+                         </div>
+                         <input type="text" value={proj.title} onChange={e => updateProject(i, 'title', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Project Title" />
+                         <input type="text" value={proj.type} onChange={e => updateProject(i, 'type', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Type (e.g. WEB, APP)" />
+                         <textarea value={proj.description} onChange={e => updateProject(i, 'description', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white resize-none" placeholder="Description" rows={2} />
+                         <input type="text" value={(proj.tags || []).join(', ')} onChange={e => updateProject(i, 'tags', e.target.value.split(',').map((t: string) => t.trim()))} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Tags (comma separated)" />
+                         <div className="flex gap-2">
+                           <input type="text" value={proj.codeLink || ''} onChange={e => updateProject(i, 'codeLink', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Code URL" />
+                           <input type="text" value={proj.liveLink || ''} onChange={e => updateProject(i, 'liveLink', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Live Demo URL" />
+                         </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4 pt-6 border-t border-white/10">
+                    <label className="block text-sm font-medium text-white">Custom My Projects (HTML/Code UI)</label>
+                    <p className="text-gray-400 text-xs mb-2">Design any custom layouts directly using HTML (Tailwind is loaded globally).</p>
+                    <textarea 
+                      value={settings.featured_html || ''}
+                      onChange={(e) => handleSettingChange('featured_html', e.target.value)}
+                      placeholder="<div className='flex gap-4'><h1>My Custom Code</h1></div>"
+                      className="w-full h-[400px] bg-[#0d1117] border border-white/10 rounded-xl p-4 text-green-400 focus:outline-none focus:border-accent-blue font-mono text-sm resize-none whitespace-pre shadow-inner leading-relaxed overflow-auto block" 
+                    />
+                    <p className="text-xs text-gray-500">If left empty, the standard My Projects GUI configurations (above) will be shown.</p>
+                  </div>
                 </div>
               )}
 
@@ -260,7 +321,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <label className="block text-sm font-medium text-white">Manage Services & Products</label>
-                    <button onClick={handleServiceAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all">
+                    <button onClick={handleServiceAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all active:scale-95">
                       <Plus size={16} /> Add Service
                     </button>
                   </div>
@@ -366,18 +427,13 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                     </div>
                     <button 
                       onClick={async () => {
-                        if (confirm(`Are you sure you want to delete ${selectedUser.name || selectedUser.email}'s data?`)) {
                           const res = await deleteUser(selectedUser.id);
                           if (res.success) {
                             setUsers(users.filter(u => u.id !== selectedUser.id));
                             setSelectedUser(null);
-                            alert('User deleted successfully.');
-                          } else {
-                            alert('Failed to delete user.');
                           }
-                        }
                       }}
-                      className="bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-red-500/20"
+                      className="bg-red-500/10 hover:bg-red-500/20 active:scale-95 text-red-400 font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-red-500/20"
                     >
                       <Trash size={16} /> Delete Data
                     </button>
@@ -525,7 +581,21 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                               <strong className="text-white">{fb.name}</strong> 
                               {fb.email && <span className="text-accent-blue ml-2">({fb.email})</span>}
                             </div>
-                            <span className="text-xs">{new Date(fb.created_at).toLocaleString()}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs">{new Date(fb.created_at).toLocaleString()}</span>
+                              <button 
+                                onClick={async () => {
+                                  const res = await deleteFeedback(fb.id);
+                                  if (res.success) {
+                                    setFeedbacks(feedbacks.filter(f => f.id !== fb.id));
+                                  }
+                                }}
+                                className="p-1 hover:bg-red-500/20 text-red-400 rounded transition-colors active:scale-90"
+                                title="Delete Feedback"
+                              >
+                                <Trash size={14} />
+                              </button>
+                            </div>
                           </div>
                           <p className="text-white bg-black/20 p-4 rounded-lg mt-3">{fb.feedback}</p>
                         </div>
@@ -543,7 +613,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
         {isAuthenticated && activeTab !== 'feedbacks' && activeTab !== 'analytics' && (
           <div className="p-4 border-t border-white/10 bg-black/20 flex justify-end">
             {error && <span className="text-sm font-medium text-red-400 self-center mr-4">{error}</span>}
-            <button onClick={handleSave} className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-lg hover:shadow-green-500/20">
+            <button onClick={handleSave} className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-lg hover:shadow-green-500/20 active:scale-95">
               <Save size={18} />
               Save All Changes
             </button>

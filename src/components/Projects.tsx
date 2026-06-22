@@ -5,46 +5,11 @@ import { getSettings } from '../lib/api';
 export default function Projects() {
   const [projects, setProjects] = useState<any[]>([
     {
-      title: 'E-Learning Platform',
-      type: 'WEB',
-      description: 'AryaPathshala is an educational platform designed to provide a smooth and engaging learning experience. Built with modern technologies, it focuses on simplicity, performance, and helping learners grow effectively.',
-      tags: ['React', 'Node.js', 'MongoDB'],
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&h=800',
-    },
-    {
       title: 'Weather Calculator Pro',
       type: 'FRONTEND',
       description: 'Advanced weather calculation project. Features real-time weather forecasting with OpenWeather API integration and climate metric analytics in a visually appealing UI.',
       tags: ['React', 'API', 'Data Viz'],
       image: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=600&h=800',
-    },
-    {
-      title: 'TaskMaster Pro',
-      type: 'FULLSTACK',
-      description: 'A comprehensive task management solution with real-time collaboration, drag-and-drop kanban boards, and detailed productivity tracking.',
-      tags: ['TypeScript', 'Firebase', 'Tailwind'],
-      image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=600&h=800',
-    },
-    {
-      title: 'EcoStore E-Commerce',
-      type: 'WEB',
-      description: 'A fully functional modern e-commerce platform focusing on eco-friendly products, complete with a custom shopping cart and payment integration.',
-      tags: ['Next.js', 'Stripe', 'PostgreSQL'],
-      image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=600&h=800',
-    },
-    {
-      title: 'Crypto Tracker AI',
-      type: 'WEB',
-      description: 'An AI-powered cryptocurrency dashboard providing real-time market trends, personalized portfolio analysis, and pattern predictions.',
-      tags: ['Vue.js', 'Firebase', 'Data Viz'],
-      image: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&h=800',
-    },
-    {
-      title: 'Fitness Buddy App',
-      type: 'MOBILE',
-      description: 'A comprehensive mobile application focusing on personal fitness journeys, offering customizable workout plans and nutrition tracking.',
-      tags: ['React Native', 'GraphQL', 'AWS'],
-      image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=600&h=800',
     }
   ]);
   const [customHtml, setCustomHtml] = useState<string>('');
@@ -76,7 +41,7 @@ export default function Projects() {
           <span className="text-xs font-semibold tracking-wider text-accent-blue uppercase">Projects</span>
         </div>
         <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4">
-          Featured <span className="text-accent-yellow">Work</span>
+          My <span className="text-accent-yellow">Project</span>
         </h2>
         <p className="text-gray-400 text-lg max-w-2xl">
           Real projects solving real problems — from e-learning platforms to API-powered apps.

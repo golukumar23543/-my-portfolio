@@ -85,7 +85,7 @@ export default function ProfileModal({ user, onClose, onUpdate }: { user: any, o
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-secondary-dark border border-white/10 rounded-2xl w-full max-w-sm p-8 relative shadow-2xl flex flex-col items-center">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white active:scale-95">
           <X size={20} />
         </button>
 
@@ -141,10 +141,10 @@ export default function ProfileModal({ user, onClose, onUpdate }: { user: any, o
         </div>
 
         <div className="w-full flex gap-3">
-          <button onClick={handleLogout} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors font-semibold">
+          <button onClick={handleLogout} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors font-semibold active:scale-95">
             <LogOut size={18} /> Logout
           </button>
-          <button onClick={handleSave} disabled={saving} className="flex-[2] bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+          <button onClick={handleSave} disabled={saving} className="flex-[2] bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)] active:scale-95">
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

@@ -1,5 +1,6 @@
 import { Star, Upload, Building2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { addFeedback, getFeedbacks } from '../lib/api';
 
 export default function Testimonials() {
@@ -136,138 +137,179 @@ export default function Testimonials() {
       )}
 
       {/* Feedback Form Dashboard */}
-      <div className="mt-24 max-w-4xl mx-auto bg-gradient-to-br from-secondary-dark/80 to-primary-dark border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden backdrop-blur-xl">
-        {/* Glow Effects */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-accent-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-yellow/5 blur-[100px] rounded-full pointer-events-none"></div>
-
-        <div className="text-center mb-10 relative z-10">
-          <h3 className="text-3xl md:text-4xl font-extrabold font-heading text-white mb-3 tracking-tight">Leave Your Feedback</h3>
-          <p className="text-gray-400 text-base max-w-xl mx-auto">Have something to say? Share your thoughts, rate my work, and help me improve!</p>
-        </div>
-
-        <form className="relative z-10 space-y-8" onSubmit={async (e) => {
-          e.preventDefault();
-          const form = e.target as HTMLFormElement;
-          const data = {
-            name: (form.elements.namedItem('name') as HTMLInputElement).value,
-            email: (form.elements.namedItem('email') as HTMLInputElement).value,
-            branch: (form.elements.namedItem('branch') as HTMLSelectElement).value,
-            feedback: (form.elements.namedItem('feedback') as HTMLTextAreaElement).value,
-            rating: rating,
-            image: imageFile
-          };
-          try {
-            const res = await addFeedback(data);
-            if (res.success) {
-              alert('Thank you for your feedback! It has been submitted directly to Mr. Golu.');
-              form.reset();
-              setRating(5);
-              setImageFile(null);
-            } else {
-              alert('Failed to submit feedback.');
-            }
-          } catch(err) {
-            alert('An error occurred.');
-          }
-        }}>
+      <motion.div 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="mt-32 max-w-5xl mx-auto relative group"
+      >
+        {/* Animated Background Gradients Behind Form */}
+        <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/20 via-primary-dark to-accent-yellow/10 rounded-[3rem] blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        
+        <div className="relative bg-[#0a0d14]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)]">
+          {/* Glass reflection top edge */}
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           
-          <div className="bg-primary-dark/50 border border-white/5 rounded-2xl p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              <div className="space-y-6">
-                 {/* Rating */}
-                 <div className="space-y-3">
-                   <label className="text-sm font-semibold text-gray-300 flex items-center gap-2">Rate your experience</label>
-                   <div className="flex gap-2">
-                     {[1, 2, 3, 4, 5].map((star) => (
-                       <button
-                         type="button"
-                         key={star}
-                         onClick={() => setRating(star)}
-                         className={`p-2 rounded-full transition-all hover:scale-110 ${rating >= star ? 'text-accent-yellow bg-accent-yellow/10' : 'text-gray-600 bg-white/5'}`}
-                       >
-                         <Star size={24} fill={rating >= star ? 'currentColor' : 'none'} strokeWidth={rating >= star ? 0 : 2} />
-                       </button>
-                     ))}
+          <div className="flex flex-col lg:flex-row">
+            {/* Left Panel: Context & Styling */}
+            <div className="w-full lg:w-[42%] p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent flex flex-col justify-between relative overflow-hidden">
+              {/* Blur blobs inside left panel */}
+              <div className="absolute -top-24 -left-24 w-64 h-64 bg-accent-blue/30 blur-[80px] rounded-full pointer-events-none"></div>
+              <div className="absolute -bottom-32 -right-24 w-72 h-72 bg-accent-yellow/20 blur-[80px] rounded-full pointer-events-none"></div>
+              
+              <div className="relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-accent-blue/10 border border-accent-blue/20 flex items-center justify-center text-accent-blue mb-8 shadow-[0_0_20px_rgba(56,189,248,0.2)]">
+                  <Star size={28} className="fill-accent-blue/20" />
+                </div>
+                <h3 className="text-4xl lg:text-5xl font-extrabold font-heading text-white mb-5 tracking-tight leading-tight">
+                  Your Thoughts <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-blue to-accent-yellow">Matter.</span>
+                </h3>
+                <p className="text-gray-400 text-base leading-relaxed mb-10">
+                  Have something to say? Whether it's about my coding style, a project we worked on, or just a quick hello — I'd love to hear from you.
+                </p>
+                
+                <div className="space-y-5">
+                   <div className="flex items-center gap-4 text-sm text-gray-300 font-medium">
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-accent-yellow"><Star size={16} fill="currentColor" /></div>
+                      Leave a public review
                    </div>
-                 </div>
-
-                 {/* Profile Image Select */}
-                 <div className="space-y-3">
-                   <label className="text-sm font-semibold text-gray-300">Profile Image</label>
-                   <div className="flex items-center gap-4">
-                     <div className="w-16 h-16 rounded-full bg-secondary-dark border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden shrink-0">
-                        {imageFile ? <img src={imageFile} alt="Preview" className="w-full h-full object-cover" /> : <Upload size={20} className="text-gray-500" />}
-                     </div>
-                     <button type="button" onClick={() => document.getElementById('fb-img')?.click()} className="text-sm font-medium bg-white/5 hover:bg-white/10 text-white px-4 py-2.5 rounded-lg border border-white/10 transition-colors">
-                       Upload Photo
-                     </button>
-                     <input type="file" id="fb-img" accept="image/*" className="hidden" onChange={handleImageChange} />
+                   <div className="flex items-center gap-4 text-sm text-gray-300 font-medium">
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-green-400"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                      Constructive feedback
                    </div>
-                 </div>
+                </div>
               </div>
 
-              <div className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Your Name</label>
+              {/* Decorative element */}
+              <div className="mt-16 opacity-30 mix-blend-overlay relative z-10 hidden lg:block">
+                <div className="text-[100px] font-heading font-black text-white/10 leading-none absolute -bottom-16 -left-8 tracking-tighter select-none">Feedback</div>
+              </div>
+            </div>
+
+            {/* Right Panel: Form */}
+            <div className="w-full lg:w-[58%] p-10 lg:p-14 relative z-10 bg-primary-dark/30">
+              <form className="space-y-6" onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const data = {
+                  name: (form.elements.namedItem('name') as HTMLInputElement).value,
+                  email: (form.elements.namedItem('email') as HTMLInputElement).value,
+                  branch: (form.elements.namedItem('branch') as HTMLSelectElement).value,
+                  feedback: (form.elements.namedItem('feedback') as HTMLTextAreaElement).value,
+                  rating: rating,
+                  image: imageFile
+                };
+                try {
+                  const res = await addFeedback(data);
+                  if (res.success) {
+                    alert('Thank you for your feedback! It has been submitted directly to Mr. Golu.');
+                    form.reset();
+                    setRating(5);
+                    setImageFile(null);
+                  } else {
+                    alert('Failed to submit feedback.');
+                  }
+                } catch(err) {
+                  alert('An error occurred.');
+                }
+              }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name field */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1">Name</label>
+                    <input 
+                      name="name"
+                      required
+                      type="text" 
+                      placeholder="John Doe"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent-blue focus:bg-white/[0.03] transition-all"
+                    />
+                  </div>
+                  
+                  {/* Branch select */}
+                  <div className="space-y-1.5 flex-1 relative">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1">Designation</label>
+                    <select name="branch" required defaultValue="" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white appearance-none focus:outline-none focus:border-accent-blue focus:bg-white/[0.03] transition-all cursor-pointer [&>option]:bg-primary-dark">
+                      <option value="" disabled className="text-gray-600">Select Role</option>
+                      <option value="CSE Student">CSE Student</option>
+                      <option value="Civil Student">Civil Student</option>
+                      <option value="Mechanical">Mechanical</option>
+                      <option value="Electrical">Electrical</option>
+                      <option value="Colleague">Colleague / Peer</option>
+                      <option value="Client">Client</option>
+                    </select>
+                    <Building2 size={16} className="absolute right-4 bottom-4 text-gray-500 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Email field */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1 flex justify-between">
+                    <span>Email</span>
+                    <span className="text-gray-600 font-normal normal-case tracking-normal">Private</span>
+                  </label>
                   <input 
-                    name="name"
-                    required
-                    type="text" 
-                    placeholder="John Doe"
-                    className="w-full bg-secondary-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all"
+                    name="email"
+                    type="email" 
+                    placeholder="john@example.com"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent-blue focus:bg-white/[0.03] transition-all"
                   />
                 </div>
-                <div className="flex gap-4">
-                  <div className="space-y-2 flex-1">
-                    <label className="text-sm font-medium text-gray-300">Branch / Designation</label>
-                    <div className="relative">
-                      <select name="branch" required className="w-full bg-secondary-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all cursor-pointer">
-                        <option value="">Select Branch</option>
-                        <option value="CSE Student">CSE</option>
-                        <option value="Civil Student">Civil</option>
-                        <option value="Mechanical">Mechanical</option>
-                        <option value="Electrical">Electrical</option>
-                        <option value="Colleague">Colleague / Peer</option>
-                        <option value="Client">Client</option>
-                      </select>
-                      <Building2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1">Feedback</label>
+                  <textarea 
+                    name="feedback"
+                    required
+                    rows={4}
+                    placeholder="What do you think about my work? Be honest!"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-accent-blue focus:bg-white/[0.03] transition-all resize-none block"
+                  />
+                </div>
+
+                {/* Rating & Photo Upload row */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 py-4 border-t border-white/10">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1">Rating</label>
+                    <div className="flex gap-1.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          type="button"
+                          key={star}
+                          onClick={() => setRating(star)}
+                          className={`p-1.5 rounded-lg transition-all active:scale-95 ${rating >= star ? 'text-accent-yellow bg-accent-yellow/10' : 'text-gray-600 hover:text-gray-400 hover:bg-white/5'}`}
+                        >
+                          <Star size={22} fill={rating >= star ? 'currentColor' : 'none'} strokeWidth={rating >= star ? 0 : 2} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest pl-1">Photo (Optional)</label>
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-full bg-black/40 border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden shrink-0">
+                        {imageFile ? <img src={imageFile} alt="Preview" className="w-full h-full object-cover" /> : <Upload size={16} className="text-gray-500" />}
+                      </div>
+                      <button type="button" onClick={() => document.getElementById('fb-img')?.click()} className="text-xs font-bold bg-white/5 hover:bg-white/10 text-white px-3 py-2 rounded-lg border border-white/10 transition-colors active:scale-95">
+                        Choose
+                      </button>
+                      <input type="file" id="fb-img" accept="image/*" className="hidden" onChange={handleImageChange} />
                     </div>
                   </div>
                 </div>
-              </div>
+                
+                <button type="submit" className="w-full mt-2 bg-gradient-to-r from-accent-blue/90 to-blue-500/90 hover:from-accent-blue hover:to-blue-400 text-white font-bold text-base px-8 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(56,189,248,0.2)] hover:shadow-[0_0_30px_rgba(56,189,248,0.4)] flex justify-center items-center gap-2 active:scale-95">
+                  Submit Feedback
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-1"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+              </form>
             </div>
-
-            <div className="space-y-2 mb-8">
-              <label className="text-sm font-medium text-gray-300 border-t border-white/5 pt-6 block flex justify-between">
-                <span>Email Address (Optional)</span>
-              </label>
-              <input 
-                name="email"
-                type="email" 
-                placeholder="john@example.com (kept private)"
-                className="w-full bg-secondary-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all"
-              />
-            </div>
-
-            <div className="space-y-2 mb-8">
-              <label className="text-sm font-medium text-gray-300">Your Feedback</label>
-              <textarea 
-                name="feedback"
-                required
-                rows={4}
-                placeholder="What do you think about my work? Be honest!"
-                className="w-full bg-secondary-dark/50 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-accent-blue focus:ring-1 focus:ring-accent-blue transition-all resize-none shadow-inner"
-              />
-            </div>
-            
-            <button type="submit" className="w-full bg-gradient-to-r from-accent-blue to-blue-500 hover:from-accent-blue-hover hover:to-blue-400 text-primary-dark font-bold text-lg px-8 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(56,189,248,0.4)] flex justify-center items-center gap-2">
-              Submit Review
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

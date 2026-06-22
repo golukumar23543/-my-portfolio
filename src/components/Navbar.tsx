@@ -1,4 +1,4 @@
-import { Sun, MessageCircle, User, Menu, X } from 'lucide-react';
+import { Sun, MessageCircle, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 
@@ -50,29 +50,12 @@ export default function Navbar({ toggleTheme, theme, onLoginClick, onAdminClick,
 
         {/* Right Actions */}
         <div className="flex items-center gap-3 md:gap-4">
-          <button onClick={toggleTheme} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all hidden sm:flex">
+          <button onClick={toggleTheme} className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all hidden sm:flex active:scale-95">
             <Sun size={18} />
           </button>
           <a href="https://wa.me/918709107808" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-green-400 hover:bg-green-400/10 transition-all hidden sm:flex">
             <MessageCircle size={18} />
           </a>
-          <button onClick={onLoginClick} className="flex items-center gap-1.5 md:gap-2 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-semibold px-3 py-2 md:px-6 md:py-2.5 rounded-full transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)]">
-            {user?.photoURL ? (
-              <motion.img 
-                key={user.photoURL}
-                initial={{ scale: 0, opacity: 0, rotate: -90 }}
-                animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                whileHover={{ scale: 1.15, rotate: 5 }}
-                src={user.photoURL} 
-                alt="Profile" 
-                className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover shadow-[0_0_10px_rgba(56,189,248,0.6)] border border-accent-blue/50" 
-              />
-            ) : (
-              <User size={16} className="md:w-[18px] md:h-[18px]" />
-            )}
-            <span className="text-sm md:text-base">{user ? 'Profile' : 'Login'}</span>
-          </button>
           
           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="w-10 h-10 xl:hidden rounded-lg border border-white/10 flex items-center justify-center text-gray-300 hover:text-white bg-white/5 transition-all">
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -112,7 +95,7 @@ export default function Navbar({ toggleTheme, theme, onLoginClick, onAdminClick,
            })}
           <div className="h-px bg-white/10 my-2"></div>
           <div className="flex justify-between items-center pb-4">
-             <button onClick={toggleTheme} className="flex-1 flex justify-center py-3 border border-white/10 rounded-xl text-gray-400 hover:text-white mr-2">
+             <button onClick={toggleTheme} className="flex-1 flex justify-center py-3 border border-white/10 rounded-xl text-gray-400 hover:text-white mr-2 active:scale-95">
                <Sun size={20} />
              </button>
              <a href="https://wa.me/918709107808" target="_blank" rel="noopener noreferrer" className="flex-1 flex justify-center py-3 border border-white/10 rounded-xl text-green-400 hover:bg-green-400/10 ml-2">

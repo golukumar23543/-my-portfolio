@@ -95,6 +95,17 @@ export async function getUserProfile(email: string | null | undefined, uid: stri
   return null;
 }
 
+export async function deleteFeedback(id: string) {
+  try {
+    const docRef = doc(db, 'feedbacks', id);
+    await deleteDoc(docRef);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete feedback:', error);
+    return { success: false };
+  }
+}
+
 export async function upsertUser(data: any) {
 
   const q = query(collection(db, 'users'), where('email', '==', data.email));

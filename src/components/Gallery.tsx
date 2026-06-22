@@ -59,7 +59,7 @@ export default function Gallery() {
           onClick={() => setSelectedImage(null)}
         >
           <button 
-            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-all"
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-all active:scale-95"
             onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
           >
             <X size={24} />
