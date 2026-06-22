@@ -5,11 +5,31 @@ import { getSettings } from '../lib/api';
 export default function Projects() {
   const [projects, setProjects] = useState<any[]>([
     {
-      title: 'Weather Calculator Pro',
-      type: 'FRONTEND',
-      description: 'Advanced weather calculation project. Features real-time weather forecasting with OpenWeather API integration and climate metric analytics in a visually appealing UI.',
-      tags: ['React', 'API', 'Data Viz'],
-      image: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=600&h=800',
+      title: 'Adobe Data',
+      type: 'WEB',
+      description: 'A web application interface for data processing and analytics.',
+      tags: ['React', 'Web'],
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=800',
+      liveLink: 'https://adobe-data.netlify.app/',
+      codeLink: ''
+    },
+    {
+      title: 'Solar System',
+      type: 'WEB',
+      description: 'An interactive exploration of our solar system and its planets.',
+      tags: ['Frontend', 'Interactive'],
+      image: 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&h=800',
+      liveLink: 'https://solarsystemb.netlify.app/',
+      codeLink: ''
+    },
+    {
+      title: 'OTT Seller',
+      type: 'WEB',
+      description: 'A comprehensive platform managing and showcasing OTT services.',
+      tags: ['E-commerce', 'Platform'],
+      image: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&h=800',
+      liveLink: 'https://ottseller453.netlify.app/',
+      codeLink: ''
     }
   ]);
   const [customHtml, setCustomHtml] = useState<string>('');
