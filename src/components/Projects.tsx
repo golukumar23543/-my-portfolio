@@ -10,7 +10,7 @@ export default function Projects() {
       description: 'A web application interface for data processing and analytics.',
       tags: ['React', 'Web'],
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=800',
-      liveLink: 'https://adobe-data.netlify.app/',
+      liveLink: '/adobe-data.html',
       codeLink: ''
     },
     {
@@ -29,7 +29,7 @@ export default function Projects() {
       tags: ['E-commerce', 'Platform'],
       image: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&h=800',
       liveLink: 'https://ottseller453.netlify.app/',
-      codeLink: ''
+      codeLink: 'https://github.com/nexott_store'
     }
   ]);
   const [customHtml, setCustomHtml] = useState<string>('');
@@ -101,10 +101,12 @@ export default function Projects() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <a href={project.codeLink || '#'} onClick={(e) => !project.codeLink && e.preventDefault()} target={project.codeLink ? "_blank" : "_self"} rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
-                      <Code size={16} />
-                      Code
-                    </a>
+                    {project.codeLink && (
+                      <a href={project.codeLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                        <Code size={16} />
+                        Code
+                      </a>
+                    )}
                     <a href={project.liveLink || '#'} onClick={(e) => !project.liveLink && e.preventDefault()} target={project.liveLink ? "_blank" : "_self"} rel="noopener noreferrer" className="flex items-center gap-2 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark px-5 py-2.5 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
                       <ExternalLink size={16} />
                       Live Site

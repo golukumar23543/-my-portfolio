@@ -1,5 +1,6 @@
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import AboutMe from './components/AboutMe';
 import Projects from './components/Projects';
 import Mentoring from './components/Mentoring';
 import Services from './components/Services';
@@ -106,6 +107,7 @@ export default function App() {
       <Services />
       <Gallery />
       <Testimonials />
+      <AboutMe />
       <CTA />
       <Footer />
       <FloatingWhatsApp />

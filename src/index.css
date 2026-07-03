@@ -59,3 +59,24 @@ h1, h2, h3, h4, h5, h6 {
 .light-mode .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
 .light-mode .border-white\/20 { border-color: rgba(0,0,0,0.15) !important; }
 .light-mode .bg-secondary-dark { background-color: var(--color-secondary-dark) !important; }
+
+/* Custom Scrollbar for inner containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.light-mode .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+.light-mode .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}

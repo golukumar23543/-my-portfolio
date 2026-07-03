@@ -1,6 +1,6 @@
 import { ArrowRight, MessageCircle, Linkedin, Youtube, Instagram, Twitter, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getPageViews } from '../lib/api';
+import { getPageViews, getSettings } from '../lib/api';
 
 const RedditIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -11,12 +11,30 @@ const RedditIcon = ({ size = 24 }: { size?: number }) => (
   </svg>
 );
 
+const QUICK_LINKS = [
+  { name: 'About Me', href: '#about' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Learning Hub', href: '#learning-hub' },
+  { name: 'Gallery', href: '#gallery' },
+  { name: 'Services', href: '#services' },
+  { name: 'Contact', href: '#contact' }
+];
+
 export default function Footer() {
   const [pageViews, setPageViews] = useState<number>(0);
+  const [servicesData, setServicesData] = useState<any[]>([]);
 
   useEffect(() => {
     getPageViews().then(data => {
       setPageViews(data.total);
+    }).catch(console.error);
+
+    getSettings().then(data => {
+      if (data.services) {
+        try {
+          setServicesData(JSON.parse(data.services));
+        } catch(e) {}
+      }
     }).catch(console.error);
   }, []);
 
@@ -93,9 +111,9 @@ export default function Footer() {
             <div className="h-px bg-accent-blue/50 flex-1"></div>
           </h4>
           <ul className="space-y-4">
-            {['About Me', 'Projects', 'Learning Hub', 'Gallery', 'Services', 'Contact'].map(link => (
-              <li key={link}>
-                <a href="#" className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{link}</a>
+            {QUICK_LINKS.map(link => (
+              <li key={link.name}>
+                <a href={link.href} className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{link.name}</a>
               </li>
             ))}
           </ul>
@@ -108,9 +126,9 @@ export default function Footer() {
             <div className="h-px bg-accent-blue/50 flex-1"></div>
           </h4>
           <ul className="space-y-4">
-            {['Website Development', 'Branding & Logo Design', 'Graphic Design', 'Software Solutions', 'Social Media Setup', 'Video Editing', 'Wedding Album'].map(link => (
-              <li key={link}>
-                <a href="#" className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{link}</a>
+            {(servicesData.length > 0 ? servicesData.map(s => s.title) : ['Website Development', 'Branding & Logo Design', 'Graphic Design', 'Software Solutions', 'Social Media Setup', 'Video Editing', 'Wedding Album']).map((title, i) => (
+              <li key={i}>
+                <a href="#services" className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{title}</a>
               </li>
             ))}
           </ul>

@@ -104,32 +104,32 @@ export default function Testimonials() {
       </div>
 
       {testimonials.length > 0 && (
-        <div className="relative flex items-center justify-center gap-6 opacity-30 md:opacity-100 min-h-[300px]">
+        <div className="relative flex items-stretch justify-center gap-6 opacity-30 md:opacity-100 min-h-[400px]">
           
-          <button onClick={() => setActiveIndex(getIndex(-1))} className="absolute left-0 md:left-10 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-secondary-dark/80 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors shadow-xl">
+          <button onClick={() => setActiveIndex(getIndex(-1))} className="absolute left-0 md:left-10 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-secondary-dark/80 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors shadow-xl top-1/2 -translate-y-1/2">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </button>
 
           {/* Previous */}
           {testimonials.length > 2 && (
-            <div className="hidden md:block w-1/4 transform scale-90 opacity-40 translate-x-12 blur-[1px] transition-all duration-700">
+            <div className="hidden md:block w-1/4 transform scale-90 opacity-40 translate-x-12 blur-[1px] transition-all duration-700 flex-1">
               <TestimonialCard t={testimonials[getIndex(-1)]} />
             </div>
           )}
 
           {/* Active Grid/Carousel Center */}
-          <div className="w-full md:w-2/5 relative z-10 transition-all duration-700">
+          <div className="w-full md:w-2/5 relative z-10 transition-all duration-700 flex-1">
             <TestimonialCard t={testimonials[activeIndex] || testimonials[0]} active />
           </div>
 
           {/* Next */}
           {testimonials.length > 1 && (
-            <div className="hidden md:block w-1/4 transform scale-90 opacity-40 -translate-x-12 blur-[1px] transition-all duration-700">
+            <div className="hidden md:block w-1/4 transform scale-90 opacity-40 -translate-x-12 blur-[1px] transition-all duration-700 flex-1">
               <TestimonialCard t={testimonials[getIndex(1)]} />
             </div>
           )}
 
-          <button onClick={() => setActiveIndex(getIndex(1))} className="absolute right-0 md:right-10 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-secondary-dark/80 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors shadow-xl">
+          <button onClick={() => setActiveIndex(getIndex(1))} className="absolute right-0 md:right-10 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-secondary-dark/80 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors shadow-xl top-1/2 -translate-y-1/2">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </button>
 
@@ -205,6 +205,13 @@ export default function Testimonials() {
                   const res = await addFeedback(data);
                   if (res.success) {
                     alert('Thank you for your feedback! It has been submitted directly to Mr. Golu.');
+                    setTestimonials(prev => [{
+                       name: data.name,
+                       role: data.branch || 'Student',
+                       image: data.image || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=150&h=150',
+                       text: data.feedback,
+                       rating: data.rating
+                    }, ...prev]);
                     form.reset();
                     setRating(5);
                     setImageFile(null);
@@ -317,27 +324,31 @@ export default function Testimonials() {
 function TestimonialCard({ t, active = false }: { t: any, active?: boolean }) {
   if (!t) return null;
   return (
-    <div className={`bg-secondary-dark rounded-3xl p-8 lg:p-10 border transition-all duration-500 relative flex flex-col items-center text-center 
+    <div className={`bg-secondary-dark rounded-3xl p-8 lg:p-10 border transition-all duration-500 relative flex flex-col items-center text-center h-full justify-between w-full
       ${active ? 'border-accent-blue/30 shadow-[0_0_40px_rgba(56,189,248,0.1)]' : 'border-white/5'}
     `}>
       <div className={`absolute top-6 left-6 text-6xl font-serif text-accent-blue/20 leading-none`}>"</div>
       
-      <p className={`text-gray-300 italic leading-relaxed mb-8 relative z-10 ${active ? 'text-base lg:text-lg' : 'text-sm'}`}>
-        {t.text}
-      </p>
+      <div className="flex-1 w-full flex items-center justify-center mb-8 relative z-10 pt-4">
+        <p className={`text-gray-300 italic leading-relaxed w-full max-h-[160px] overflow-y-auto break-words break-all whitespace-pre-wrap pr-2 custom-scrollbar ${active ? 'text-base lg:text-lg' : 'text-sm'}`}>
+          {t.text}
+        </p>
+      </div>
 
-      <div className="flex gap-1 mb-6 text-accent-yellow">
+      <div className="flex gap-1 mb-6 text-accent-yellow shrink-0">
         {[...Array(5)].map((_, i) => <Star key={i} size={active ? 16 : 14} fill={i < (t.rating || 5) ? "currentColor" : "none"} strokeWidth={i < (t.rating || 5) ? 0 : 1} stroke={i < (t.rating || 5) ? "none" : "#6b7280"} />)}
       </div>
 
-      <div className={`rounded-full p-1 mb-4 ${active ? 'bg-gradient-to-r from-accent-blue to-accent-yellow' : 'bg-white/10'}`}>
+      <div className={`rounded-full p-1 mb-4 shrink-0 ${active ? 'bg-gradient-to-r from-accent-blue to-accent-yellow' : 'bg-white/10'}`}>
         <img src={t.image} alt={t.name} className={`rounded-full object-cover border-2 border-primary-dark ${active ? 'w-20 h-20' : 'w-16 h-16'}`} />
       </div>
 
-      <h4 className={`font-bold text-white mb-1 ${active ? 'text-lg' : 'text-base'}`}>{t.name}</h4>
-      <p className={`text-accent-blue/80 font-medium ${active ? 'text-sm' : 'text-xs'}`}>{t.role}</p>
+      <div className="shrink-0 w-full">
+        <h4 className={`font-bold text-white mb-1 truncate ${active ? 'text-lg' : 'text-base'}`}>{t.name}</h4>
+        <p className={`text-accent-blue/80 font-medium truncate ${active ? 'text-sm' : 'text-xs'}`}>{t.role}</p>
+      </div>
 
-      <div className="absolute font-serif text-accent-blue/20 rotate-180 -bottom-2 right-6 min-h-6 min-w-6 text-6xl">"</div>
+      <div className="absolute font-serif text-accent-blue/20 rotate-180 -bottom-2 right-6 min-h-6 min-w-6 text-6xl pointer-events-none">"</div>
     </div>
   );
 }

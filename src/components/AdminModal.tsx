@@ -11,6 +11,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
   const [settings, setSettings] = useState<any>({
     profile_image: '',
+    about_me: '',
     featured_work: '[]',
     featured_html: '',
     services: '[]',
@@ -225,6 +226,9 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
               <button onClick={() => setActiveTab('settings')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'settings' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <ImageIcon size={18} /> Profile Image
               </button>
+              <button onClick={() => setActiveTab('aboutme')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'aboutme' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <UserSquare2 size={18} /> About Me
+              </button>
               <button onClick={() => setActiveTab('projects')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'projects' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Briefcase size={18} /> My Projects
               </button>
@@ -268,6 +272,48 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                           <span className="text-sm font-semibold">Click to browse gallery</span>
                        </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'aboutme' && (
+                <div className="space-y-6 max-w-2xl">
+                  <label className="block text-sm font-medium text-white mb-2">About Me Section</label>
+                  <p className="text-gray-400 text-xs mb-3">Manage the About Me section data.</p>
+                  
+                  <div className="space-y-4">
+                    {(() => {
+                      let data: any = { title: '', description: '', image: '', skills: [] };
+                      try { if (settings.about_me) data = JSON.parse(settings.about_me); } catch(e){}
+                      return (
+                        <>
+                          <div className="border-2 border-dashed border-white/20 hover:border-accent-blue transition-colors rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer relative" onClick={() => document.getElementById('aboutme-upload')?.click()}>
+                            <input type="file" id="aboutme-upload" className="hidden" accept="image/*" onChange={(e) => {
+                               const file = e.target.files?.[0];
+                               if (file) {
+                                 compressImage(file, (compressed) => {
+                                   handleSettingChange('about_me', JSON.stringify({ ...data, image: compressed }));
+                                 });
+                               }
+                            }} />
+                            {data.image ? (
+                                <img src={data.image} className="h-32 w-auto rounded-lg object-contain shadow-lg" alt="About" />
+                            ) : (
+                               <div className="flex flex-col items-center text-gray-500">
+                                  <Plus size={24} className="mb-1" />
+                                  <span className="text-xs font-semibold">Upload Image</span>
+                               </div>
+                            )}
+                          </div>
+                          
+                          <input type="text" value={data.title || ''} onChange={e => handleSettingChange('about_me', JSON.stringify({ ...data, title: e.target.value }))} className="w-full bg-secondary-dark border border-white/10 rounded-xl p-3 text-sm text-white" placeholder="Section Title (e.g. About Me)" />
+                          
+                          <textarea value={data.description || ''} onChange={e => handleSettingChange('about_me', JSON.stringify({ ...data, description: e.target.value }))} className="w-full bg-secondary-dark border border-white/10 rounded-xl p-3 text-sm text-white resize-none h-32" placeholder="Description" />
+                          
+                          <input type="text" value={(data.skills || []).join(', ')} onChange={e => handleSettingChange('about_me', JSON.stringify({ ...data, skills: e.target.value.split(',').map((s:string) => s.trim()).filter(Boolean) }))} className="w-full bg-secondary-dark border border-white/10 rounded-xl p-3 text-sm text-white" placeholder="Skills (comma separated, e.g. React, Node.js)" />
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
