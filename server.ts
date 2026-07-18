@@ -35,14 +35,22 @@ IMPORTANT: If a user explicitly asks to speak with the admin, contact Golu, or r
 
 Answer their questions confidently based on typical portfolio data.`;
 
+      // Gemini API requires the first message to be from the 'user'
+      let formattedMessages = messages;
+      if (formattedMessages.length > 0 && formattedMessages[0].role === 'model') {
+        formattedMessages = [
+          { role: 'user', parts: [{ text: 'Hello' }] },
+          ...formattedMessages
+        ];
+      }
+
       // Use a conversational model
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [
-           { role: 'user', parts: [{ text: systemInstruction }] },
-           { role: 'model', parts: [{ text: 'Understood. I am ready to assist.' }] },
-           ...messages
-        ],
+        contents: formattedMessages,
+        config: {
+          systemInstruction: systemInstruction,
+        }
       });
 
       res.json({ reply: response.text });
