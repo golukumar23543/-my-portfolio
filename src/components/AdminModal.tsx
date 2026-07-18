@@ -8,6 +8,11 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('settings');
+  const [activeProductTab, setActiveProductTab] = useState<'add'|'manage'>('manage');
+  const [editingProductIdx, setEditingProductIdx] = useState<number | null>(null);
+  const [showGalleryPicker, setShowGalleryPicker] = useState<{ active: boolean, onSelect: (url: string) => void }>({ active: false, onSelect: () => {} });
+  const [editingProduct, setEditingProduct] = useState({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+
 
   const [settings, setSettings] = useState<any>({
     profile_image: '',
@@ -233,7 +238,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 <Briefcase size={18} /> My Projects
               </button>
               <button onClick={() => setActiveTab('services')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'services' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Layers size={18} /> Services
+                <Layers size={18} /> Products
               </button>
               <button onClick={() => setActiveTab('gallery')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'gallery' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Camera size={18} /> Gallery
@@ -365,31 +370,111 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
 
               {activeTab === 'services' && (
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <label className="block text-sm font-medium text-white">Manage Services & Products</label>
-                    <button onClick={handleServiceAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all active:scale-95">
-                      <Plus size={16} /> Add Service
+                  <div className="flex bg-black/20 rounded-xl p-1 mb-6 border border-white/5">
+                    <button 
+                      onClick={() => {
+                        setActiveProductTab('add');
+                        setEditingProduct({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+                        setEditingProductIdx(null);
+                      }} 
+                      className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'add' ? 'bg-[#2563eb] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    >
+                      Add/Edit Product
+                    </button>
+                    <button 
+                      onClick={() => setActiveProductTab('manage')} 
+                      className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'manage' ? 'bg-[#333333] text-white shadow-lg border border-white/10' : 'text-gray-400 hover:text-white'}`}
+                    >
+                      Manage Products
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(JSON.parse(settings.services || '[]')).map((srv: any, i: number) => (
-                      <div key={i} className="bg-secondary-dark p-4 rounded-xl border border-white/10 relative">
-                         <button onClick={() => removeService(i)} className="absolute top-4 right-4 text-red-400 hover:text-red-300 z-10 bg-black/50 p-1.5 rounded-full"><Trash size={16} /></button>
-                         <div className="mb-4">
-                           <div className="h-32 w-full bg-primary-dark border border-dashed border-white/20 rounded-lg flex items-center justify-center cursor-pointer hover:border-accent-blue overflow-hidden relative" onClick={() => document.getElementById(`srv-img-${i}`)?.click()}>
-                             <input type="file" id={`srv-img-${i}`} className="hidden" accept="image/*" onChange={(e) => updateServiceImage(e, i)} />
-                             {srv.image ? <img src={srv.image} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center"><Plus size={24} className="text-gray-500 mb-1" /><span className="text-xs text-gray-500">Add Image</span></div>}
-                           </div>
-                         </div>
-                         <input type="text" value={srv.title} onChange={e => updateService(i, 'title', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white mb-2" placeholder="Title / Service Name" />
-                         <textarea value={srv.desc} onChange={e => updateService(i, 'desc', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white mb-2 resize-none" placeholder="Description" rows={2} />
-                         <div className="flex gap-2">
-                           <input type="text" value={srv.price} onChange={e => updateService(i, 'price', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Price (e.g. $50)" />
-                           <input type="text" value={srv.link} onChange={e => updateService(i, 'link', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Buy/Contact Link" />
-                         </div>
+                  
+                  {activeProductTab === 'add' && (
+                    <div className="bg-[#1a1a1a] rounded-xl border border-white/10 p-6 space-y-4 shadow-xl">
+                      <h3 className="text-2xl font-black text-white mb-6 font-heading tracking-tight">{editingProductIdx !== null ? 'Edit Product' : 'Add Product'}</h3>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Image URL</label>
+                        <div 
+                           className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white cursor-pointer hover:border-accent-blue transition-colors flex items-center justify-between"
+                           onClick={() => setShowGalleryPicker({ active: true, onSelect: (url) => { setEditingProduct({ ...editingProduct, image: url }); setShowGalleryPicker({ active: false, onSelect: () => {} }); } })}
+                        >
+                           <span className="truncate">{editingProduct.image || 'Click to select from gallery...'}</span>
+                           <Camera size={16} className="text-gray-500" />
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Product Name</label>
+                        <input type="text" value={editingProduct.title} onChange={e => setEditingProduct({...editingProduct, title: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Birthday Surprise Demo 4" />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Product Type</label>
+                        <select value={editingProduct.type} onChange={e => setEditingProduct({...editingProduct, type: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white appearance-none focus:outline-none focus:border-white/30 transition-colors">
+                          <option value="Free">Free</option>
+                          <option value="Paid">Paid</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Download Link (URL)</label>
+                        <input type="text" value={editingProduct.link} onChange={e => setEditingProduct({...editingProduct, link: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Live Preview Link (URL) - Optional</label>
+                        <input type="text" value={editingProduct.liveLink} onChange={e => setEditingProduct({...editingProduct, liveLink: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
+                      </div>
+                      
+                      <button 
+                        onClick={() => {
+                           let current = [];
+                           try { current = JSON.parse(settings.services || '[]'); } catch(e){}
+                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.type, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: '' };
+                           if (editingProductIdx !== null) {
+                             current[editingProductIdx] = newProduct;
+                           } else {
+                             current.push(newProduct);
+                           }
+                           handleSettingChange('services', JSON.stringify(current));
+                           setEditingProduct({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+                           setEditingProductIdx(null);
+                           setActiveProductTab('manage');
+                        }}
+                        className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold py-3.5 rounded-xl transition-all shadow-lg mt-4 active:scale-95"
+                      >
+                        Save Product
+                      </button>
+                    </div>
+                  )}
+
+                  {activeProductTab === 'manage' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(JSON.parse(settings.services || '[]')).map((srv: any, i: number) => (
+                        <div key={i} className="bg-secondary-dark p-4 rounded-xl border border-white/10 relative group">
+                           <div className="flex items-center gap-4">
+                             <img src={srv.image || 'https://via.placeholder.com/150'} className="w-20 h-20 object-cover rounded-lg border border-white/10" />
+                             <div className="flex-1 overflow-hidden">
+                               <h4 className="font-bold text-white text-lg truncate">{srv.title}</h4>
+                               <p className="text-accent-blue text-sm font-semibold mt-1">{srv.price}</p>
+                               <div className="flex gap-2 mt-3">
+                                 <button onClick={() => {
+                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', type: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '' });
+                                   setEditingProductIdx(i);
+                                   setActiveProductTab('add');
+                                 }} className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors">Edit</button>
+                                 <button onClick={() => removeService(i)} className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1.5 rounded text-xs font-medium transition-colors">Delete</button>
+                               </div>
+                             </div>
+                           </div>
+                        </div>
+                      ))}
+                      {(JSON.parse(settings.services || '[]')).length === 0 && (
+                         <div className="col-span-full p-8 text-center text-gray-500 bg-black/20 rounded-xl border border-white/5">No products added yet.</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -666,6 +751,40 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
       </div>
+
+      {/* Gallery Picker Modal */}
+      {showGalleryPicker.active && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+          <div className="bg-[#1a1a1a] rounded-2xl w-full max-w-4xl max-h-[80vh] flex flex-col border border-white/10 overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
+              <h3 className="text-white font-bold font-heading">Select Image from Gallery</h3>
+              <button onClick={() => setShowGalleryPicker({ active: false, onSelect: () => {} })} className="text-gray-400 hover:text-white transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              {(JSON.parse(settings.gallery || '[]')).length === 0 ? (
+                <div className="text-center text-gray-500 py-12">No images in gallery. Please add images from the Gallery tab first.</div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {(JSON.parse(settings.gallery || '[]')).map((img: any, i: number) => (
+                    <div 
+                      key={i} 
+                      onClick={() => showGalleryPicker.onSelect(img.url)}
+                      className="relative rounded-xl overflow-hidden border border-white/10 aspect-square cursor-pointer hover:border-accent-blue hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all group"
+                    >
+                      <img src={img.url} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                         <span className="bg-accent-blue text-primary-dark text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg">Select</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

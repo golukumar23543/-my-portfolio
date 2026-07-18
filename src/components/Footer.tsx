@@ -126,11 +126,14 @@ export default function Footer() {
             <div className="h-px bg-accent-blue/50 flex-1"></div>
           </h4>
           <ul className="space-y-4">
-            {(servicesData.length > 0 ? servicesData.map(s => s.title) : ['Website Development', 'Branding & Logo Design', 'Graphic Design', 'Software Solutions', 'Social Media Setup', 'Video Editing', 'Wedding Album']).map((title, i) => (
-              <li key={i}>
-                <a href="#services" className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{title}</a>
-              </li>
-            ))}
+            {(servicesData.length > 0 ? servicesData.map(s => s.title) : ['Website Development', 'Branding & Logo Design', 'Graphic Design', 'Software Solutions', 'Social Media Setup', 'Video Editing', 'Wedding Album']).map((title, i) => {
+              const serviceId = `service-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+              return (
+                <li key={i}>
+                  <a href={`#${serviceId}`} className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{title}</a>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

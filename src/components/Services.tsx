@@ -4,66 +4,52 @@ import { getSettings } from '../lib/api';
 export default function Services() {
   const [services, setServices] = useState<any[]>([
     { 
-      title: 'Full-Stack Development', 
+      title: 'Website Development', 
       desc: 'End-to-end custom web applications with React, Next.js, and modern backend architectures.', 
       image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=400', 
       price: 'Starts at $999', 
       link: '#' 
     },
     { 
-      title: 'UI/UX Design', 
-      desc: 'Pixel-perfect, user-centric interfaces designed in Figma to maximize engagement.', 
+      title: 'Branding & Logo Design', 
+      desc: 'Crafting unique brand identities and memorable logos tailored to your business vision.', 
       image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&h=400', 
-      price: 'Starts at $499', 
+      price: 'Starts at $299', 
       link: '#' 
     },
     { 
-      title: 'Mobile App Development', 
-      desc: 'Cross-platform mobile applications for iOS and Android using React Native.', 
+      title: 'Graphic Design', 
+      desc: 'High-quality visual content including flyers, banners, and digital marketing materials.', 
       image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=400', 
+      price: 'Starts at $199', 
+      link: '#' 
+    },
+    { 
+      title: 'Software Solutions', 
+      desc: 'Custom software architecture and solutions to optimize your business operations.', 
+      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&h=400', 
       price: 'Starts at $1499', 
       link: '#' 
     },
-    { 
-      title: 'Backend & Cloud DevOps', 
-      desc: 'Scalable infrastructure, serverless deployments, and database architecture on AWS/Firebase.', 
-      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&h=400', 
-      price: 'Starts at $799', 
-      link: '#' 
-    },
     {
-      title: 'AI & Machine Learning Int.',
-      desc: 'Implement OpenAI, Gemini, or custom LLMs directly into your applications to build intelligent features.',
+      title: 'Social Media Setup',
+      desc: 'Comprehensive setup and optimization for your business pages across major social platforms.',
       image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&h=400',
-      price: 'Starts at $1199',
+      price: 'Starts at $399',
       link: '#'
     },
     {
-      title: 'E-Commerce Solutions',
-      desc: 'High-conversion online stores with custom payment gateways, inventory management, and marketing tools.',
+      title: 'Video Editing',
+      desc: 'Professional video editing services for YouTube, reels, and promotional business videos.',
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=400',
-      price: 'Starts at $899',
+      price: 'Starts at $499',
       link: '#'
     },
     {
-      title: 'Technical Consulting',
-      desc: 'Expert guidance on software architecture, technology stack selection, and cloud migration strategies.',
+      title: 'Wedding Album',
+      desc: 'Beautifully designed and curated wedding albums to capture your special moments.',
       image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&h=400',
       price: 'Starts at $249',
-      link: '#'
-    },
-    {
-      title: 'Custom CMS Solutions',
-      desc: 'Headless CMS implementations using Sanity or Strapi tailored for your marketing team\'s workflow.',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=400',
-      price: 'Starts at $699',
-      link: '#'
-    },
-    {
-      title: 'MVP Prototyping',
-      desc: 'Rapid development of Minimum Viable Products for startups to test ideas and secure funding quickly.',
-      image: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&h=400',
-      price: 'Starts at $1999',
       link: '#'
     }
   ]);
@@ -90,7 +76,7 @@ export default function Services() {
           <span className="text-xs font-semibold tracking-wider text-accent-blue uppercase">Services & Products</span>
         </div>
         <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4">
-          What I <span className="text-accent-blue">Off</span><span className="text-accent-yellow">er</span>
+          <span className="text-accent-blue">Prod</span><span className="text-accent-yellow">uct</span>
         </h2>
         <p className="text-gray-400 text-lg max-w-xl">
           From websites to full brand identity — premium digital services crafted with precision.
@@ -100,9 +86,10 @@ export default function Services() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((s, i) => {
+          const serviceId = `service-${s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
           return (
-            <a href={s.link || "#"} key={i} className="bg-secondary-dark border border-white/5 hover:border-accent-blue/30 transition-all rounded-2xl flex flex-col group overflow-hidden shadow-lg hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] block">
-              <div className="h-48 w-full bg-primary-dark overflow-hidden flex items-center justify-center">
+            <div id={serviceId} key={i} className="bg-secondary-dark border border-white/5 hover:border-accent-blue/30 transition-all rounded-2xl flex flex-col overflow-hidden shadow-lg hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+              <div className="h-48 w-full bg-primary-dark overflow-hidden flex items-center justify-center group">
                 {s.image ? (
                   <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
@@ -110,14 +97,31 @@ export default function Services() {
                 )}
               </div>
               <div className="p-6 flex flex-col flex-1">
-                <h3 className="text-xl font-bold mb-2 text-white group-hover:text-accent-blue transition-colors">{s.title}</h3>
-                <p className="text-gray-400 text-sm mb-6 flex-1">{s.desc}</p>
-                <div className="flex items-center justify-between mt-auto">
-                   <span className="text-accent-yellow font-bold text-sm tracking-wide">{s.price || 'Contact for Price'}</span>
-                   <span className="text-accent-blue text-xs font-bold uppercase tracking-wider">View Details</span>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-bold text-white group-hover:text-accent-blue transition-colors">{s.title}</h3>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-md ${s.price === 'Free' ? 'bg-green-500/20 text-green-400' : 'bg-accent-yellow/20 text-accent-yellow'}`}>
+                    {s.price || 'Contact for Price'}
+                  </span>
+                </div>
+                {s.desc && <p className="text-gray-400 text-sm mb-6 flex-1">{s.desc}</p>}
+                
+                <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/5">
+                   {s.link && (
+                     <a href={s.link} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white/5 hover:bg-white/10 text-center py-2.5 rounded-lg text-sm font-semibold text-white transition-colors border border-white/10">
+                       Download
+                     </a>
+                   )}
+                   {s.liveLink && (
+                     <a href={s.liveLink} target="_blank" rel="noopener noreferrer" className="flex-1 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark text-center py-2.5 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
+                       Live Preview
+                     </a>
+                   )}
+                   {!s.link && !s.liveLink && (
+                     <span className="text-gray-500 text-sm w-full text-center py-2">No links available</span>
+                   )}
                 </div>
               </div>
-            </a>
+            </div>
           );
         })}
       </div>

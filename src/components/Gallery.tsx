@@ -22,7 +22,8 @@ export default function Gallery() {
       .catch(err => console.error(err));
   }, []);
 
-  if (images.length === 0) return null;
+  // Always render section so quick links work, even if empty
+  // if (images.length === 0) return null;
 
   return (
     <>

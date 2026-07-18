@@ -8,7 +8,7 @@ import Gallery from './components/Gallery';
 import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
-import FloatingWhatsApp from './components/FloatingWhatsApp';
+import FloatingChatbot from './components/FloatingChatbot';
 import AuthModal from './components/AuthModal';
 import AdminModal from './components/AdminModal';
 import ProfileModal from './components/ProfileModal';
@@ -110,7 +110,7 @@ export default function App() {
       <AboutMe />
       <CTA />
       <Footer />
-      <FloatingWhatsApp />
+      <FloatingChatbot />
       
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
       {isAdminOpen && <AdminModal onClose={() => setIsAdminOpen(false)} />}
