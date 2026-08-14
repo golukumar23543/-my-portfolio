@@ -1,4 +1,6 @@
-import { initializeApp } from "firebase/app";
+import fs from 'fs';
+
+const content = `import { initializeApp } from "firebase/app";
 import { initializeFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import firebaseConfig from "../../firebase-applet-config.json";
@@ -12,3 +14,6 @@ export const db = initializeFirestore(app, {
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+`;
+
+fs.writeFileSync('src/lib/firebase.ts', content);

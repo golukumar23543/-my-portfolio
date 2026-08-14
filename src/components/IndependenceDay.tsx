@@ -163,7 +163,7 @@ export default function IndependenceDay() {
                   </motion.div>
                   <div>
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF9933] via-white to-[#138808]">
-                      78th Independence Day
+                      80th Independence Day
                     </h2>
                     <h3 className="text-white/60 font-medium text-sm mt-1">15 August 1947</h3>
                   </div>
