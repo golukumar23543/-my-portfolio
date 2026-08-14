@@ -93,7 +93,7 @@ export default function Hero() {
           className="flex-1 flex justify-center lg:justify-end w-full max-w-md lg:max-w-none relative mt-12 lg:mt-0"
         >
           {/* Decorative outer rings */}
-          <div className="relative w-[320px] h-[320px] md:w-[450px] md:h-[450px]">
+          <div className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px]">
             <motion.div 
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 20, ease: "linear" }}

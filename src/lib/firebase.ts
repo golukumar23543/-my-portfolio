@@ -4,10 +4,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import firebaseConfig from "../../firebase-applet-config.json";
 
 // We need to inject the databaseURL or simply use the projectId
-const app = initializeApp({
-  ...firebaseConfig,
-  databaseURL: `(default)`
-});
+const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);

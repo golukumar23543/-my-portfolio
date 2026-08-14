@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getSettings } from '../lib/api';
+import ProductFeedbackModal from './ProductFeedbackModal';
+import { MessageSquare } from 'lucide-react';
 
 export default function Services() {
+  const [activeFeedbackProduct, setActiveFeedbackProduct] = useState<string | null>(null);
   const [services, setServices] = useState<any[]>([
     { 
       title: 'Website Development', 
@@ -69,7 +72,8 @@ export default function Services() {
   }, []);
 
   return (
-    <section id="services" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+    <>
+      <section id="services" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="mb-16">
         <div className="inline-flex items-center gap-2 bg-secondary-dark border border-white/10 rounded-full px-4 py-1.5 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>
@@ -106,6 +110,9 @@ export default function Services() {
                 {s.desc && <p className="text-gray-400 text-sm mb-6 flex-1">{s.desc}</p>}
                 
                 <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/5">
+                   <button onClick={() => setActiveFeedbackProduct(s.title)} className="bg-white/5 hover:bg-white/10 text-white p-2.5 rounded-lg border border-white/10 transition-colors" title="Leave Feedback">
+                     <MessageSquare size={16} />
+                   </button>
                    {s.link && (
                      <a href={s.link} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white/5 hover:bg-white/10 text-center py-2.5 rounded-lg text-sm font-semibold text-white transition-colors border border-white/10">
                        Download
@@ -126,5 +133,7 @@ export default function Services() {
         })}
       </div>
     </section>
+      {activeFeedbackProduct && <ProductFeedbackModal productTitle={activeFeedbackProduct} onClose={() => setActiveFeedbackProduct(null)} />}
+    </>
   );
 }

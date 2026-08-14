@@ -11,7 +11,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [activeProductTab, setActiveProductTab] = useState<'add'|'manage'>('manage');
   const [editingProductIdx, setEditingProductIdx] = useState<number | null>(null);
   const [showGalleryPicker, setShowGalleryPicker] = useState<{ active: boolean, onSelect: (url: string) => void }>({ active: false, onSelect: () => {} });
-  const [editingProduct, setEditingProduct] = useState({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+  const [editingProduct, setEditingProduct] = useState({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
 
 
   const [settings, setSettings] = useState<any>({
@@ -374,7 +374,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                     <button 
                       onClick={() => {
                         setActiveProductTab('add');
-                        setEditingProduct({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+                        setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
                         setEditingProductIdx(null);
                       }} 
                       className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'add' ? 'bg-[#2563eb] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
@@ -410,11 +410,12 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Product Type</label>
-                        <select value={editingProduct.type} onChange={e => setEditingProduct({...editingProduct, type: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white appearance-none focus:outline-none focus:border-white/30 transition-colors">
-                          <option value="Free">Free</option>
-                          <option value="Paid">Paid</option>
-                        </select>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Price</label>
+                        <input type="text" value={editingProduct.price} onChange={e => setEditingProduct({...editingProduct, price: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Free, $10, Contact for Price" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
+                        <textarea value={editingProduct.desc} onChange={e => setEditingProduct({...editingProduct, desc: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-24 resize-none" placeholder="Description of the product" />
                       </div>
                       
                       <div>
@@ -431,14 +432,14 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                         onClick={() => {
                            let current = [];
                            try { current = JSON.parse(settings.services || '[]'); } catch(e){}
-                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.type, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: '' };
+                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.price, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: editingProduct.desc };
                            if (editingProductIdx !== null) {
                              current[editingProductIdx] = newProduct;
                            } else {
                              current.push(newProduct);
                            }
                            handleSettingChange('services', JSON.stringify(current));
-                           setEditingProduct({ title: '', image: '', type: 'Free', link: '', liveLink: '' });
+                           setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
                            setEditingProductIdx(null);
                            setActiveProductTab('manage');
                         }}
@@ -460,7 +461,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                                <p className="text-accent-blue text-sm font-semibold mt-1">{srv.price}</p>
                                <div className="flex gap-2 mt-3">
                                  <button onClick={() => {
-                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', type: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '' });
+                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', price: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '', desc: srv.desc || '' });
                                    setEditingProductIdx(i);
                                    setActiveProductTab('add');
                                  }} className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors">Edit</button>
@@ -729,6 +730,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                             </div>
                           </div>
                           <p className="text-white bg-black/20 p-4 rounded-lg mt-3">{fb.feedback}</p>
+                          {fb.image_url && <img src={fb.image_url} alt="Feedback" className="mt-4 max-h-64 rounded-xl border border-white/10" />}
                         </div>
                       ))}
                     </div>

@@ -1,21 +1,30 @@
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import AboutMe from './components/AboutMe';
-import Projects from './components/Projects';
-import Mentoring from './components/Mentoring';
-import Services from './components/Services';
-import Gallery from './components/Gallery';
-import Testimonials from './components/Testimonials';
-import CTA from './components/CTA';
 import Footer from './components/Footer';
 import FloatingChatbot from './components/FloatingChatbot';
 import AuthModal from './components/AuthModal';
 import AdminModal from './components/AdminModal';
 import ProfileModal from './components/ProfileModal';
+import IndependenceDay from './components/IndependenceDay';
+
+import Home from './pages/Home';
+import ProjectsPage from './pages/ProjectsPage';
+import ProductsPage from './pages/ProductsPage';
+import VisualJourneyPage from './pages/VisualJourneyPage';
+import FeedbackPage from './pages/FeedbackPage';
+
 import { useState, useEffect } from 'react';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { addSession, trackPageView } from './lib/api';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 export default function App() {
   const [theme, setTheme] = useState('dark');
@@ -36,7 +45,6 @@ export default function App() {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       let label = '';
-
       if (target.closest('button, a')) {
         const actionable = target.closest('button, a') as HTMLElement;
         label = actionable.innerText || actionable.getAttribute('aria-label') || actionable.tagName;
@@ -61,20 +69,18 @@ export default function App() {
     let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Optimistic UI update with auth state
         if (isMounted) setUser(currentUser);
         
-        // Fetch extended attributes from Firestore
         const { getUserProfile } = await import('./lib/api');
         const dbUser = await getUserProfile(currentUser.email, currentUser.uid);
         if (dbUser && isMounted) {
-          // Merge auth user with db user (specifically for custom photoURL from our canvas logic)
           setUser({ ...currentUser, photoURL: dbUser.photoURL || currentUser.photoURL, displayName: dbUser.name || currentUser.displayName, branch: dbUser.branch || '', address: dbUser.address || '' });
         }
       } else {
         if (isMounted) setUser(null);
       }
     });
+
     return () => {
       isMounted = false;
       unsubscribe();
@@ -89,7 +95,6 @@ export default function App() {
     }
   }, [theme]);
 
-  // Handle Login Click - if user logged in, open profile, else open auth modal
   const handleLoginClick = () => {
     if (user) {
       setIsProfileOpen(true);
@@ -99,23 +104,28 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${theme === 'light' ? 'bg-[#f8fafc] text-[#0f172a]' : 'bg-primary-dark text-white selection:bg-accent-blue selection:text-white'}`}>
-      <Navbar toggleTheme={toggleTheme} theme={theme} onLoginClick={handleLoginClick} onAdminClick={() => setIsAdminOpen(true)} user={user} />
-      <Hero />
-      <Projects />
-      <Mentoring />
-      <Services />
-      <Gallery />
-      <Testimonials />
-      <AboutMe />
-      <CTA />
-      <Footer />
-      <FloatingChatbot />
-      
-      {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
-      {isAdminOpen && <AdminModal onClose={() => setIsAdminOpen(false)} />}
-      {isProfileOpen && <ProfileModal user={user} onClose={() => setIsProfileOpen(false)} onUpdate={(updatedUser) => setUser({...updatedUser})} />}
-    </div>
+    <Router>
+      <ScrollToTop />
+      <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${theme === 'light' ? 'bg-[#f8fafc] text-[#0f172a]' : 'bg-primary-dark text-white selection:bg-accent-blue selection:text-white'}`}>
+        <Navbar toggleTheme={toggleTheme} theme={theme} onLoginClick={handleLoginClick} onAdminClick={() => setIsAdminOpen(true)} user={user} />
+        
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/visual-journey" element={<VisualJourneyPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+        </Routes>
+        
+        <Footer />
+        <FloatingChatbot />
+        <IndependenceDay />
+        
+        {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
+        {isAdminOpen && <AdminModal onClose={() => setIsAdminOpen(false)} />}
+        {isProfileOpen && <ProfileModal user={user} onClose={() => setIsProfileOpen(false)} onUpdate={(updatedUser) => setUser({...updatedUser})} />}
+      </div>
+    </Router>
   );
 }
 
