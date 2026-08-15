@@ -11,7 +11,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
   const [activeProductTab, setActiveProductTab] = useState<'add'|'manage'>('manage');
   const [editingProductIdx, setEditingProductIdx] = useState<number | null>(null);
   const [showGalleryPicker, setShowGalleryPicker] = useState<{ active: boolean, onSelect: (url: string) => void }>({ active: false, onSelect: () => {} });
-  const [editingProduct, setEditingProduct] = useState({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
+  const [editingProduct, setEditingProduct] = useState({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '', content: '' });
 
 
   const [settings, setSettings] = useState<any>({
@@ -374,7 +374,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                     <button 
                       onClick={() => {
                         setActiveProductTab('add');
-                        setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
+                        setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '', content: '' });
                         setEditingProductIdx(null);
                       }} 
                       className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'add' ? 'bg-[#2563eb] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
@@ -413,8 +413,15 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                         <label className="block text-sm font-medium text-gray-400 mb-2">Price</label>
                         <input type="text" value={editingProduct.price} onChange={e => setEditingProduct({...editingProduct, price: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Free, $10, Contact for Price" />
                       </div>
+                      
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Dedicated Page Content (Markdown/HTML supported)</label>
+                        <textarea value={editingProduct.content || ''} onChange={e => setEditingProduct({...editingProduct, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-64 resize-none font-mono" placeholder="Write full details about this service/product for its dedicated webpage. You can use Markdown or HTML..." />
+                        <p className="text-xs text-gray-500 mt-1">If this is provided, a dedicated webpage for this service will be available.</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Short Description</label>
                         <textarea value={editingProduct.desc} onChange={e => setEditingProduct({...editingProduct, desc: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-24 resize-none" placeholder="Description of the product" />
                       </div>
                       
@@ -432,14 +439,14 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                         onClick={() => {
                            let current = [];
                            try { current = JSON.parse(settings.services || '[]'); } catch(e){}
-                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.price, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: editingProduct.desc };
+                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.price, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: editingProduct.desc, content: editingProduct.content };
                            if (editingProductIdx !== null) {
                              current[editingProductIdx] = newProduct;
                            } else {
                              current.push(newProduct);
                            }
                            handleSettingChange('services', JSON.stringify(current));
-                           setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '' });
+                           setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '', content: '' });
                            setEditingProductIdx(null);
                            setActiveProductTab('manage');
                         }}
@@ -461,7 +468,7 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                                <p className="text-accent-blue text-sm font-semibold mt-1">{srv.price}</p>
                                <div className="flex gap-2 mt-3">
                                  <button onClick={() => {
-                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', price: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '', desc: srv.desc || '' });
+                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', price: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '', desc: srv.desc || '', content: srv.content || '' });
                                    setEditingProductIdx(i);
                                    setActiveProductTab('add');
                                  }} className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors">Edit</button>

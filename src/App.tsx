@@ -11,6 +11,9 @@ import ProjectsPage from './pages/ProjectsPage';
 import ProductsPage from './pages/ProductsPage';
 import VisualJourneyPage from './pages/VisualJourneyPage';
 import FeedbackPage from './pages/FeedbackPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
+import ServicePage from './pages/ServicePage';
 
 import { useState, useEffect } from 'react';
 import { auth } from './lib/firebase';
@@ -115,6 +118,9 @@ export default function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/visual-journey" element={<VisualJourneyPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route path="/service/:slug" element={<ServicePage />} />
         </Routes>
         
         <Footer />

@@ -11,7 +11,7 @@ Currently, I have basic knowledge of programming and web technologies, including
 Beyond tech, I am fluent in Bhojpuri, Hindi, and English, allowing me to connect with people from different diverse backgrounds. Feel free to connect with me!
 
 Contact No: +91 8709107808`,
-    image: '/golu.jpg',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu', // Updated to a working placeholder avatar
     skills: ['HTML', 'CSS', 'JavaScript', 'Java', 'C Language', 'Python', 'DSA Basics']
   });
 
@@ -21,7 +21,12 @@ Contact No: +91 8709107808`,
         if (data.about_me) {
           try {
             const parsed = JSON.parse(data.about_me);
+            
+            if (parsed.image === '/golu.jpg' || !parsed.image) {
+              parsed.image = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu';
+            }
             setAboutData((prev: any) => ({ ...prev, ...parsed }));
+  
           } catch(e) {
             console.error('Failed to parse about_me JSON', e);
           }

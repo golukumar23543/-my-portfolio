@@ -1,16 +1,24 @@
 import fs from 'fs';
-let code = fs.readFileSync('src/components/AboutMe.tsx', 'utf8');
 
-const targetEffect = `try {
-            const parsed = JSON.parse(data.about_me);
-            // Optionally, we can merge or override here if the db has custom text, 
-            // but we'll stick to the default state unless it's strictly overridden.
-            // setAboutData(parsed); 
-          } catch(e) {`;
-const newEffect = `try {
-            const parsed = JSON.parse(data.about_me);
+const path = 'src/components/AboutMe.tsx';
+let content = fs.readFileSync(path, 'utf8');
+
+// Replace the default image from /golu.jpg to a working placeholder
+content = content.replace(
+  "image: '/golu.jpg',",
+  "image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu', // Updated to a working placeholder avatar"
+);
+
+// We should also handle the case where they already saved {image: '/golu.jpg'} in the database
+// so let's intercept the parsed JSON
+content = content.replace(
+  "setAboutData((prev: any) => ({ ...prev, ...parsed }));",
+  `
+            if (parsed.image === '/golu.jpg' || !parsed.image) {
+              parsed.image = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu';
+            }
             setAboutData((prev: any) => ({ ...prev, ...parsed }));
-          } catch(e) {`;
+  `
+);
 
-code = code.replace(targetEffect, newEffect);
-fs.writeFileSync('src/components/AboutMe.tsx', code);
+fs.writeFileSync(path, content);

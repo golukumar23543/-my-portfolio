@@ -1,5 +1,6 @@
 import { ArrowRight, MessageCircle, Linkedin, Youtube, Instagram, Twitter, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getPageViews, getSettings } from '../lib/api';
 
 const RedditIcon = ({ size = 24 }: { size?: number }) => (
@@ -168,8 +169,8 @@ export default function Footer() {
         </p>
 
         <div className="flex gap-4">
-          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+          <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link to="/terms-of-use" className="hover:text-white transition-colors">Terms of Use</Link>
         </div>
       </div>
     </footer>

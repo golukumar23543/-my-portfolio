@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getSettings } from '../lib/api';
 import ProductFeedbackModal from './ProductFeedbackModal';
 import { MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Services() {
   const [activeFeedbackProduct, setActiveFeedbackProduct] = useState<string | null>(null);
@@ -118,14 +119,16 @@ export default function Services() {
                        Download
                      </a>
                    )}
+
                    {s.liveLink && (
-                     <a href={s.liveLink} target="_blank" rel="noopener noreferrer" className="flex-1 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark text-center py-2.5 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
-                       Live Preview
+                     <a href={s.liveLink} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white/10 hover:bg-white/20 text-white text-center py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                       Preview
                      </a>
                    )}
-                   {!s.link && !s.liveLink && (
-                     <span className="text-gray-500 text-sm w-full text-center py-2">No links available</span>
-                   )}
+                   <Link to={`/service/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex-1 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark text-center py-2.5 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
+                     View Details
+                   </Link>
+
                 </div>
               </div>
             </div>

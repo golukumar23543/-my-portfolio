@@ -1,40 +1,24 @@
 import fs from 'fs';
-let code = fs.readFileSync('src/components/Services.tsx', 'utf8');
+let content = fs.readFileSync('src/components/Services.tsx', 'utf8');
 
-const targetImport = `import { useState, useEffect } from 'react';
-import { getSettings } from '../lib/api';`;
+if (!content.includes("import { Link } from 'react-router-dom';")) {
+  content = content.replace("import { MessageSquare } from 'lucide-react';", "import { MessageSquare } from 'lucide-react';\nimport { Link } from 'react-router-dom';");
+}
 
-const newImport = `import { useState, useEffect } from 'react';
-import { getSettings } from '../lib/api';
-import ProductFeedbackModal from './ProductFeedbackModal';
-import { MessageSquare } from 'lucide-react';`;
+const replacement = `
+                   {s.liveLink && (
+                     <a href={s.liveLink} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white/10 hover:bg-white/20 text-white text-center py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                       Preview
+                     </a>
+                   )}
+                   <Link to={\`/service/\${s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}\`} className="flex-1 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark text-center py-2.5 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
+                     View Details
+                   </Link>
+`;
 
-code = code.replace(targetImport, newImport);
+content = content.replace(
+/                   \{s\.liveLink && \([\s\S]*?<\/a>\s*\)\}\s*\{!s\.link && !s\.liveLink && \(\s*<span className="text-gray-500 text-sm w-full text-center py-2">No links available<\/span>\s*\)\}/,
+replacement
+);
 
-const targetState = `const [services, setServices] = useState<any[]>([`;
-const newState = `const [activeFeedbackProduct, setActiveFeedbackProduct] = useState<string | null>(null);
-  const [services, setServices] = useState<any[]>([`;
-
-code = code.replace(targetState, newState);
-
-const targetButtons = `<div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/5">`;
-const newButtons = `<div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/5">
-                   <button onClick={() => setActiveFeedbackProduct(s.title)} className="bg-white/5 hover:bg-white/10 text-white p-2.5 rounded-lg border border-white/10 transition-colors" title="Leave Feedback">
-                     <MessageSquare size={16} />
-                   </button>`;
-
-code = code.replace(targetButtons, newButtons);
-
-const targetEnd = `</section>
-  );
-}`;
-const newEnd = `</section>
-      {activeFeedbackProduct && <ProductFeedbackModal productTitle={activeFeedbackProduct} onClose={() => setActiveFeedbackProduct(null)} />}
-    </>
-  );
-}`;
-
-code = code.replace(targetEnd, newEnd);
-code = code.replace(`return (\n    <section`, `return (\n    <>\n      <section`);
-
-fs.writeFileSync('src/components/Services.tsx', code);
+fs.writeFileSync('src/components/Services.tsx', content);
