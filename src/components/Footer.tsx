@@ -131,7 +131,7 @@ export default function Footer() {
               const serviceId = `service-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
               return (
                 <li key={i}>
-                  <a href={`#${serviceId}`} className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{title}</a>
+                  <Link to={`/service/${serviceId.replace('service-', '')}`} className="text-gray-400 hover:text-accent-blue text-sm transition-colors">{title}</Link>
                 </li>
               );
             })}

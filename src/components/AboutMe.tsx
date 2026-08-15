@@ -4,15 +4,17 @@ import { getSettings } from '../lib/api';
 export default function AboutMe() {
   const [aboutData, setAboutData] = useState<any>({
     title: 'About Mr. Golu Prajapati',
-    description: `Hello! My name is Mr. Golu Prajapati, and I am currently a Diploma student in Computer Science Engineering (CSE). I have a strong passion for learning and exploring the world of technology. I am constantly building my foundations and trying out new development tools to solve everyday problems.
+    description: `Hello! I am Mr. Golu Prajapati, a passionate technologist and software developer currently pursuing my Diploma in Computer Science Engineering (CSE) at NSIT (Netaji Subhas Institute of Technology).
 
-Currently, I have basic knowledge of programming and web technologies, including HTML, CSS, JavaScript, Java, C language, Python, and DSA (Data Structures & Algorithms). I enjoy creating user-friendly interfaces and writing clean code. 
+I have a strong foundation in programming and a deep curiosity for how things work behind the scenes. My technical expertise spans across core web technologies like HTML, CSS, and JavaScript, as well as robust programming languages including Java, C, and Python. I am also actively honing my problem-solving skills through Data Structures & Algorithms (DSA).
 
-Beyond tech, I am fluent in Bhojpuri, Hindi, and English, allowing me to connect with people from different diverse backgrounds. Feel free to connect with me!
+Beyond coding, I am a highly adaptable communicator, fluent in Hindi, Bhojpuri, and English. This linguistic versatility allows me to connect with diverse teams and clients effectively. I believe in continuous learning, writing clean code, and building software that creates a positive impact.
 
-Contact No: +91 8709107808`,
+Whether it's developing dynamic user interfaces or tackling complex logical challenges, I approach every project with discipline and purpose. Let's build something extraordinary together!
+
+📞 Contact No: +91 8709107808`,
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu', // Updated to a working placeholder avatar
-    skills: ['HTML', 'CSS', 'JavaScript', 'Java', 'C Language', 'Python', 'DSA Basics']
+    skills: ['HTML', 'CSS', 'JavaScript', 'Java', 'C Language', 'Python', 'DSA']
   });
 
   useEffect(() => {
@@ -22,9 +24,16 @@ Contact No: +91 8709107808`,
           try {
             const parsed = JSON.parse(data.about_me);
             
+            
             if (parsed.image === '/golu.jpg' || !parsed.image) {
               parsed.image = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Golu';
             }
+            
+            // Ensure empty database strings don't override our beautiful defaults
+            if (!parsed.title || !parsed.title.trim()) delete parsed.title;
+            if (!parsed.description || !parsed.description.trim()) delete parsed.description;
+            if (!parsed.skills || parsed.skills.length === 0 || (parsed.skills.length === 1 && parsed.skills[0].trim() === "")) delete parsed.skills;
+
             setAboutData((prev: any) => ({ ...prev, ...parsed }));
   
           } catch(e) {

@@ -6,11 +6,12 @@ import { Link, useLocation } from 'react-router-dom';
 export default function Navbar({ toggleTheme, theme, onLoginClick, onAdminClick, user }: { toggleTheme?: () => void, theme?: string, onLoginClick?: () => void, onAdminClick?: () => void, user?: any }) {
   const links = [
     { name: 'Home', path: '/' },
-    { name: 'About', path: '/#about' },
+    { name: 'About Me', path: '/about' },
     { name: 'Projects', path: '/projects' },
-    { name: 'Products', path: '/products' },
-    { name: 'Visual Journey', path: '/visual-journey' },
-    { name: 'Feedback', path: '/feedback' },
+    { name: 'Learning Hub', path: '/learning-hub' },
+    { name: 'Gallery', path: '/gallery' },
+    { name: 'Services', path: '/services' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);

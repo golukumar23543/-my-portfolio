@@ -10,6 +10,9 @@ import Home from './pages/Home';
 import ProjectsPage from './pages/ProjectsPage';
 import ProductsPage from './pages/ProductsPage';
 import VisualJourneyPage from './pages/VisualJourneyPage';
+import AboutPage from './pages/AboutPage';
+import LearningHubPage from './pages/LearningHubPage';
+import ContactPage from './pages/ContactPage';
 import FeedbackPage from './pages/FeedbackPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
@@ -114,9 +117,12 @@ export default function App() {
         
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/visual-journey" element={<VisualJourneyPage />} />
+          <Route path="/learning-hub" element={<LearningHubPage />} />
+          <Route path="/gallery" element={<VisualJourneyPage />} />
+          <Route path="/services" element={<ProductsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />

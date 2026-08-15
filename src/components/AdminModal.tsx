@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, Save, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2, Activity } from 'lucide-react';
+import { X, Save, BookOpen, Phone, MessageSquare, Settings, Image as ImageIcon, Briefcase, Users, Layers, Camera, Plus, Trash, UserSquare2, Activity } from 'lucide-react';
 import { getSettings, saveSettings, getFeedbacks, getSessions, getUsers, getPageViews, deleteUser, deleteFeedback } from '../lib/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -237,12 +237,41 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
               <button onClick={() => setActiveTab('projects')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'projects' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Briefcase size={18} /> My Projects
               </button>
-              <button onClick={() => setActiveTab('services')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'services' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Layers size={18} /> Products
-              </button>
+              
               <button onClick={() => setActiveTab('gallery')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'gallery' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <Camera size={18} /> Gallery
               </button>
+
+              <button onClick={() => setActiveTab('contact')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'contact' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <Phone size={18} /> Contact Info
+              </button>
+              <button onClick={() => setActiveTab('learning')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'learning' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <BookOpen size={18} /> Learning Hub
+              </button>
+
+
+              <div className="hidden md:block h-px bg-white/10 my-2 shrink-0"></div>
+              <div className="text-xs font-bold text-gray-500 uppercase px-4 py-2 flex justify-between items-center">
+                 Services
+                 <button onClick={() => {
+                     let current = [];
+                     try { current = JSON.parse(settings.services || '[]'); } catch(e){}
+                     current.push({ title: 'New Service', image: '', price: 'Free', link: '', liveLink: '', desc: '', content: '' });
+                     handleSettingChange('services', JSON.stringify(current));
+                     setActiveTab('service-' + (current.length - 1));
+                 }} className="hover:text-white bg-white/5 rounded p-1"><Plus size={12} /></button>
+              </div>
+              {(() => {
+                let services = [];
+                try { services = JSON.parse(settings.services || '[]'); } catch(e){}
+                return services.map((srv, idx) => (
+                  <button key={'srv-'+idx} onClick={() => setActiveTab('service-' + idx)} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'service-' + idx ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                    <Layers size={18} /> <span className="truncate max-w-[150px]">{srv.title}</span>
+                  </button>
+                ));
+              })()}
+              <div className="hidden md:block h-px bg-white/10 my-2 shrink-0"></div>
+
               <div className="hidden md:block h-px bg-white/10 my-4 shrink-0"></div>
               <button onClick={() => setActiveTab('users')} className={`shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap snap-start ${activeTab === 'users' ? 'bg-accent-blue text-primary-dark' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                 <UserSquare2 size={18} /> Users Database
@@ -368,125 +397,175 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              {activeTab === 'services' && (
-                <div className="space-y-6">
-                  <div className="flex bg-black/20 rounded-xl p-1 mb-6 border border-white/5">
-                    <button 
-                      onClick={() => {
-                        setActiveProductTab('add');
-                        setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '', content: '' });
-                        setEditingProductIdx(null);
-                      }} 
-                      className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'add' ? 'bg-[#2563eb] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-                    >
-                      Add/Edit Product
-                    </button>
-                    <button 
-                      onClick={() => setActiveProductTab('manage')} 
-                      className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${activeProductTab === 'manage' ? 'bg-[#333333] text-white shadow-lg border border-white/10' : 'text-gray-400 hover:text-white'}`}
-                    >
-                      Manage Products
-                    </button>
-                  </div>
-                  
-                  {activeProductTab === 'add' && (
-                    <div className="bg-[#1a1a1a] rounded-xl border border-white/10 p-6 space-y-4 shadow-xl">
-                      <h3 className="text-2xl font-black text-white mb-6 font-heading tracking-tight">{editingProductIdx !== null ? 'Edit Product' : 'Add Product'}</h3>
+              
+              {activeTab.startsWith('service-') && (
+                <div className="bg-[#1a1a1a] rounded-xl border border-white/10 p-6 space-y-4 shadow-xl">
+                  {(() => {
+                     const idx = parseInt(activeTab.split('-')[1]);
+                     let current = [];
+                     try { current = JSON.parse(settings.services || '[]'); } catch(e){}
+                     const srv = current[idx];
+                     if (!srv) return <div className="text-gray-400">Service not found.</div>;
+                     
+                     const updateSrv = (field, value) => {
+                       const next = [...current];
+                       next[idx] = { ...next[idx], [field]: value };
+                       handleSettingChange('services', JSON.stringify(next));
+                     };
+
+                     return (
+                       <>
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-2xl font-black text-white font-heading tracking-tight">Edit Service: {srv.title}</h3>
+                        <button onClick={() => {
+                          const next = [...current];
+                          next.splice(idx, 1);
+                          handleSettingChange('services', JSON.stringify(next));
+                          setActiveTab('aboutme'); // redirect
+                        }} className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+                           <Trash size={16} /> Delete Service
+                        </button>
+                      </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Image URL</label>
                         <div 
                            className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white cursor-pointer hover:border-accent-blue transition-colors flex items-center justify-between"
-                           onClick={() => setShowGalleryPicker({ active: true, onSelect: (url) => { setEditingProduct({ ...editingProduct, image: url }); setShowGalleryPicker({ active: false, onSelect: () => {} }); } })}
+                           onClick={() => setShowGalleryPicker({ active: true, onSelect: (url) => { updateSrv('image', url); setShowGalleryPicker({ active: false, onSelect: () => {} }); } })}
                         >
-                           <span className="truncate">{editingProduct.image || 'Click to select from gallery...'}</span>
+                           <span className="truncate">{srv.image || 'Click to select from gallery...'}</span>
                            <Camera size={16} className="text-gray-500" />
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Product Name</label>
-                        <input type="text" value={editingProduct.title} onChange={e => setEditingProduct({...editingProduct, title: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Birthday Surprise Demo 4" />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Product/Service Name</label>
+                        <input type="text" value={srv.title} onChange={e => updateSrv('title', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Website Development" />
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Price</label>
-                        <input type="text" value={editingProduct.price} onChange={e => setEditingProduct({...editingProduct, price: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Free, $10, Contact for Price" />
+                        <input type="text" value={srv.price} onChange={e => updateSrv('price', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Starts at $999" />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Dedicated Page Content (Markdown/HTML supported)</label>
-                        <textarea value={editingProduct.content || ''} onChange={e => setEditingProduct({...editingProduct, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-64 resize-none font-mono" placeholder="Write full details about this service/product for its dedicated webpage. You can use Markdown or HTML..." />
+                        <textarea value={srv.content || ''} onChange={e => updateSrv('content', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-64 resize-none font-mono" placeholder="Write full details about this service/product for its dedicated webpage. You can use Markdown or HTML..." />
                         <p className="text-xs text-gray-500 mt-1">If this is provided, a dedicated webpage for this service will be available.</p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Short Description</label>
-                        <textarea value={editingProduct.desc} onChange={e => setEditingProduct({...editingProduct, desc: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-24 resize-none" placeholder="Description of the product" />
+                        <textarea value={srv.desc} onChange={e => updateSrv('desc', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-24 resize-none" placeholder="Short description for the home page card" />
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Download Link (URL)</label>
-                        <input type="text" value={editingProduct.link} onChange={e => setEditingProduct({...editingProduct, link: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
+                        <input type="text" value={srv.link} onChange={e => updateSrv('link', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Live Preview Link (URL) - Optional</label>
-                        <input type="text" value={editingProduct.liveLink} onChange={e => setEditingProduct({...editingProduct, liveLink: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
+                        <input type="text" value={srv.liveLink || ''} onChange={e => updateSrv('liveLink', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
                       </div>
-                      
-                      <button 
-                        onClick={() => {
-                           let current = [];
-                           try { current = JSON.parse(settings.services || '[]'); } catch(e){}
-                           const newProduct = { title: editingProduct.title, image: editingProduct.image, price: editingProduct.price, link: editingProduct.link, liveLink: editingProduct.liveLink, desc: editingProduct.desc, content: editingProduct.content };
-                           if (editingProductIdx !== null) {
-                             current[editingProductIdx] = newProduct;
-                           } else {
-                             current.push(newProduct);
-                           }
-                           handleSettingChange('services', JSON.stringify(current));
-                           setEditingProduct({ title: '', image: '', price: 'Free', desc: '', link: '', liveLink: '', content: '' });
-                           setEditingProductIdx(null);
-                           setActiveProductTab('manage');
-                        }}
-                        className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold py-3.5 rounded-xl transition-all shadow-lg mt-4 active:scale-95"
-                      >
-                        Save Product
-                      </button>
-                    </div>
-                  )}
-
-                  {activeProductTab === 'manage' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {(JSON.parse(settings.services || '[]')).map((srv: any, i: number) => (
-                        <div key={i} className="bg-secondary-dark p-4 rounded-xl border border-white/10 relative group">
-                           <div className="flex items-center gap-4">
-                             <img src={srv.image || 'https://via.placeholder.com/150'} className="w-20 h-20 object-cover rounded-lg border border-white/10" />
-                             <div className="flex-1 overflow-hidden">
-                               <h4 className="font-bold text-white text-lg truncate">{srv.title}</h4>
-                               <p className="text-accent-blue text-sm font-semibold mt-1">{srv.price}</p>
-                               <div className="flex gap-2 mt-3">
-                                 <button onClick={() => {
-                                   setEditingProduct({ title: srv.title || '', image: srv.image || '', price: srv.price || 'Free', link: srv.link || '', liveLink: srv.liveLink || '', desc: srv.desc || '', content: srv.content || '' });
-                                   setEditingProductIdx(i);
-                                   setActiveProductTab('add');
-                                 }} className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors">Edit</button>
-                                 <button onClick={() => removeService(i)} className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1.5 rounded text-xs font-medium transition-colors">Delete</button>
-                               </div>
-                             </div>
-                           </div>
+                       </>
+                     );
+                  })()}
+                </div>
+              )}
+              
+              {activeTab === 'contact' && (
+                <div className="space-y-6 max-w-2xl">
+                  <h3 className="text-xl font-bold text-white mb-4">Contact Information</h3>
+                  {(() => {
+                    let data = { email: 'ambitiongolu@gmail.com', phone: '+91 8709107808', address: 'Patna, Bihar, India' };
+                    try { if (settings.contact) data = JSON.parse(settings.contact); } catch(e){}
+                    return (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                          <input type="email" value={data.email} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, email: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
                         </div>
-                      ))}
-                      {(JSON.parse(settings.services || '[]')).length === 0 && (
-                         <div className="col-span-full p-8 text-center text-gray-500 bg-black/20 rounded-xl border border-white/5">No products added yet.</div>
-                      )}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number / WhatsApp</label>
+                          <input type="text" value={data.phone} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, phone: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-400 mb-2">Address / Location</label>
+                          <input type="text" value={data.address} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, address: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+              
+              {activeTab === 'learning' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold text-white">Learning Resources</h3>
+                        <p className="text-gray-400 text-xs mt-1">Manage articles, videos, and tutorials.</p>
                     </div>
-                  )}
+                    <button onClick={() => {
+                      let current = [];
+                      try { current = JSON.parse(settings.learning_hub || '[]'); } catch(e){}
+                      current.push({ title: 'New Resource', type: 'Article', link: '#', desc: 'Description' });
+                      handleSettingChange('learning_hub', JSON.stringify(current));
+                    }} className="bg-accent-blue text-primary-dark px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                      <Plus size={16} /> Add Resource
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(JSON.parse(settings.learning_hub || '[]')).map((res, i) => (
+                      <div key={i} className="bg-[#1a1a1a] p-4 rounded-xl border border-white/10 relative group hover:border-accent-blue transition-colors">
+                        <button onClick={() => {
+                          let current = JSON.parse(settings.learning_hub || '[]');
+                          current.splice(i, 1);
+                          handleSettingChange('learning_hub', JSON.stringify(current));
+                        }} className="absolute top-4 right-4 text-gray-500 hover:text-red-400 transition-colors">
+                          <Trash size={16} />
+                        </button>
+                        <div className="space-y-3 pr-8">
+                          <input type="text" value={res.title} onChange={e => {
+                            let current = JSON.parse(settings.learning_hub || '[]');
+                            current[i].title = e.target.value;
+                            handleSettingChange('learning_hub', JSON.stringify(current));
+                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none" placeholder="Resource Title" />
+                          
+                          <select value={res.type} onChange={e => {
+                            let current = JSON.parse(settings.learning_hub || '[]');
+                            current[i].type = e.target.value;
+                            handleSettingChange('learning_hub', JSON.stringify(current));
+                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none">
+                            <option>Article</option>
+                            <option>Video</option>
+                            <option>Course</option>
+                          </select>
+
+                          <input type="text" value={res.link} onChange={e => {
+                            let current = JSON.parse(settings.learning_hub || '[]');
+                            current[i].link = e.target.value;
+                            handleSettingChange('learning_hub', JSON.stringify(current));
+                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none" placeholder="URL Link" />
+
+                          <textarea value={res.desc} onChange={e => {
+                            let current = JSON.parse(settings.learning_hub || '[]');
+                            current[i].desc = e.target.value;
+                            handleSettingChange('learning_hub', JSON.stringify(current));
+                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none resize-none" placeholder="Short description"></textarea>
+                        </div>
+                      </div>
+                    ))}
+                    {(JSON.parse(settings.learning_hub || '[]')).length === 0 && (
+                      <div className="col-span-full p-8 text-center text-gray-500 bg-black/20 rounded-xl border border-white/5">No learning resources added.</div>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {activeTab === 'gallery' && (
+{activeTab === 'gallery' && (
                 <div className="space-y-4">
                   <div className="flex justify-between items-center mb-4">
                     <label className="block text-sm font-medium text-white">Gallery Images</label>

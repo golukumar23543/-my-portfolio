@@ -80,9 +80,7 @@ export default function Services() {
           <span className="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>
           <span className="text-xs font-semibold tracking-wider text-accent-blue uppercase">Services & Products</span>
         </div>
-        <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4">
-          <span className="text-accent-blue">Prod</span><span className="text-accent-yellow">uct</span>
-        </h2>
+        <h2 className="text-4xl md:text-5xl font-extrabold font-heading mb-4"><span className="text-accent-blue">Our</span> <span className="text-accent-yellow">Services</span></h2>
         <p className="text-gray-400 text-lg max-w-xl">
           From websites to full brand identity — premium digital services crafted with precision.
         </p>
