@@ -1,8 +1,11 @@
 import { Code, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import { getSettings } from '../lib/api';
 
 export default function Projects() {
+  const location = useLocation();
+  const isProjectsPage = location.pathname === '/projects';
   const [projects, setProjects] = useState<any[]>([
     {
       title: 'Adobe Data',
@@ -77,7 +80,7 @@ export default function Projects() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {projects.map((project, idx) => (
+            {(isProjectsPage ? projects : projects.slice(0, 4)).map((project, idx) => (
               <div key={idx} className="bg-secondary-dark rounded-2xl border border-white/5 overflow-hidden flex flex-col md:flex-row hover:border-white/10 transition-colors">
                 {/* Left Info */}
                 <div className="flex-1 p-8 flex flex-col">
@@ -121,12 +124,21 @@ export default function Projects() {
             ))}
           </div>
           
-          <div className="flex justify-center">
-            <a href="https://github.com/nexott_store" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-8 py-3.5 rounded-full transition-all shadow-[0_0_20px_rgba(56,189,248,0.4)]">
-              View All Projects
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </a>
-          </div>
+          
+          {!isProjectsPage && projects.length > 4 && (
+            <div className="flex justify-center">
+              <Link to="/projects" onClick={() => window.scrollTo(0,0)} className="flex items-center gap-2 bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-8 py-3.5 rounded-full transition-all shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+                View All Projects
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </Link>
+            </div>
+          )}
+          {isProjectsPage && (
+            <div className="flex justify-center mt-12 text-gray-500 font-medium">
+              You've reached the end of the projects.
+            </div>
+          )}
+
         </>
       )}
     </section>

@@ -356,216 +356,77 @@ export default function AdminModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <label className="block text-sm font-medium text-white">Manage My Projects</label>
-                    <button onClick={handleProjectAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all active:scale-95">
+                    <button onClick={handleProjectAdd} className="bg-accent-blue hover:bg-accent-blue-hover text-primary-dark font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all shadow-lg active:scale-95">
                       <Plus size={16} /> Add Project
                     </button>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-6">
                     {(JSON.parse(settings.featured_work || '[]')).map((proj: any, i: number) => (
-                      <div key={i} className="bg-secondary-dark p-4 rounded-xl border border-white/10 relative flex flex-col gap-2">
-                         <button onClick={() => removeProject(i)} className="absolute top-4 right-4 text-red-400 hover:text-red-300 z-10 bg-black/50 p-1.5 rounded-full"><Trash size={16} /></button>
-                         <div className="mb-2">
-                           <div className="h-32 w-full bg-primary-dark border border-dashed border-white/20 rounded-lg flex items-center justify-center cursor-pointer hover:border-accent-blue overflow-hidden relative" onClick={() => document.getElementById(`proj-img-${i}`)?.click()}>
+                      <div key={i} className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 relative flex flex-col md:flex-row gap-6 shadow-xl">
+                         <button onClick={() => removeProject(i)} className="absolute top-4 right-4 text-red-400 hover:text-red-300 z-10 bg-red-500/10 p-2 rounded-lg transition-colors"><Trash size={16} /></button>
+                         
+                         {/* Image Upload Area */}
+                         <div className="w-full md:w-1/3 shrink-0">
+                           <label className="block text-xs font-medium text-gray-400 mb-2">Project Image</label>
+                           <div className="h-40 w-full bg-[#0a0a0a] border-2 border-dashed border-white/20 rounded-xl flex items-center justify-center cursor-pointer hover:border-accent-blue overflow-hidden relative group" onClick={() => document.getElementById(`proj-img-${i}`)?.click()}>
                              <input type="file" id={`proj-img-${i}`} className="hidden" accept="image/*" onChange={(e) => updateProjectImage(e, i)} />
-                             {proj.image ? <img src={proj.image} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center"><Plus size={24} className="text-gray-500 mb-1" /><span className="text-xs text-gray-500">Project Image</span></div>}
+                             {proj.image ? (
+                               <>
+                                 <img src={proj.image} className="w-full h-full object-cover" />
+                                 <div className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-sm font-bold text-white transition-all"><Camera size={18} className="mr-2"/> Change</div>
+                               </>
+                             ) : (
+                               <div className="flex flex-col items-center"><Plus size={24} className="text-gray-500 mb-2" /><span className="text-xs text-gray-500 font-medium">Upload Image</span></div>
+                             )}
                            </div>
                          </div>
-                         <input type="text" value={proj.title} onChange={e => updateProject(i, 'title', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Project Title" />
-                         <input type="text" value={proj.type} onChange={e => updateProject(i, 'type', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Type (e.g. WEB, APP)" />
-                         <textarea value={proj.description} onChange={e => updateProject(i, 'description', e.target.value)} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white resize-none" placeholder="Description" rows={2} />
-                         <input type="text" value={(proj.tags || []).join(', ')} onChange={e => updateProject(i, 'tags', e.target.value.split(',').map((t: string) => t.trim()))} className="w-full bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Tags (comma separated)" />
-                         <div className="flex gap-2">
-                           <input type="text" value={proj.codeLink || ''} onChange={e => updateProject(i, 'codeLink', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Code URL" />
-                           <input type="text" value={proj.liveLink || ''} onChange={e => updateProject(i, 'liveLink', e.target.value)} className="w-1/2 bg-primary-dark border border-white/10 p-2 text-sm text-white" placeholder="Live Demo URL" />
+
+                         {/* Details Area */}
+                         <div className="flex-1 flex flex-col gap-3">
+                           <div>
+                             <label className="block text-xs font-medium text-gray-400 mb-1">Project Name</label>
+                             <input type="text" value={proj.title || ''} onChange={e => updateProject(i, 'title', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-accent-blue outline-none transition-colors" placeholder="e.g. My Website" />
+                           </div>
+                           
+                           <div className="flex flex-col md:flex-row gap-3">
+                             <div className="flex-1">
+                               <label className="block text-xs font-medium text-gray-400 mb-1">Platform Type</label>
+                               <select value={proj.type || ''} onChange={e => updateProject(i, 'type', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-accent-blue outline-none transition-colors">
+                                 <option value="" disabled>Select Type</option>
+                                 <option value="Website">Website</option>
+                                 <option value="App">App</option>
+                                 <option value="Both App and Website">Both App and Website</option>
+                                 <option value="WEB APP">WEB APP</option>
+                                 <option value="TOOL">TOOL</option>
+                                 <option value="WEB">WEB</option>
+                               </select>
+                             </div>
+                             <div className="flex-1">
+                               <label className="block text-xs font-medium text-gray-400 mb-1">Live URL (Link)</label>
+                               <input type="text" value={proj.liveLink || ''} onChange={e => updateProject(i, 'liveLink', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-accent-blue outline-none transition-colors" placeholder="https://" />
+                             </div>
+                           </div>
+
+                           <div>
+                             <label className="block text-xs font-medium text-gray-400 mb-1">Note / Description</label>
+                             <textarea value={proj.description || ''} onChange={e => updateProject(i, 'description', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-accent-blue outline-none transition-colors resize-none" placeholder="Write a short note about this project..." rows={2} />
+                           </div>
+
+                           <div>
+                             <label className="block text-xs font-medium text-gray-400 mb-1">Tags (Comma Separated)</label>
+                             <input type="text" value={(proj.tags || []).join(', ')} onChange={e => updateProject(i, 'tags', e.target.value.split(',').map((t: string) => t.trim()))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-accent-blue outline-none transition-colors" placeholder="e.g. React, Tailwind" />
+                           </div>
                          </div>
                       </div>
                     ))}
-                  </div>
-
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <label className="block text-sm font-medium text-white">Custom My Projects (HTML/Code UI)</label>
-                    <p className="text-gray-400 text-xs mb-2">Design any custom layouts directly using HTML (Tailwind is loaded globally).</p>
-                    <textarea 
-                      value={settings.featured_html || ''}
-                      onChange={(e) => handleSettingChange('featured_html', e.target.value)}
-                      placeholder="<div className='flex gap-4'><h1>My Custom Code</h1></div>"
-                      className="w-full h-[400px] bg-[#0d1117] border border-white/10 rounded-xl p-4 text-green-400 focus:outline-none focus:border-accent-blue font-mono text-sm resize-none whitespace-pre shadow-inner leading-relaxed overflow-auto block" 
-                    />
-                    <p className="text-xs text-gray-500">If left empty, the standard My Projects GUI configurations (above) will be shown.</p>
-                  </div>
-                </div>
-              )}
-
-              
-              {activeTab.startsWith('service-') && (
-                <div className="bg-[#1a1a1a] rounded-xl border border-white/10 p-6 space-y-4 shadow-xl">
-                  {(() => {
-                     const idx = parseInt(activeTab.split('-')[1]);
-                     let current = [];
-                     try { current = JSON.parse(settings.services || '[]'); } catch(e){}
-                     const srv = current[idx];
-                     if (!srv) return <div className="text-gray-400">Service not found.</div>;
-                     
-                     const updateSrv = (field, value) => {
-                       const next = [...current];
-                       next[idx] = { ...next[idx], [field]: value };
-                       handleSettingChange('services', JSON.stringify(next));
-                     };
-
-                     return (
-                       <>
-                      <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-2xl font-black text-white font-heading tracking-tight">Edit Service: {srv.title}</h3>
-                        <button onClick={() => {
-                          const next = [...current];
-                          next.splice(idx, 1);
-                          handleSettingChange('services', JSON.stringify(next));
-                          setActiveTab('aboutme'); // redirect
-                        }} className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
-                           <Trash size={16} /> Delete Service
-                        </button>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Image URL</label>
-                        <div 
-                           className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white cursor-pointer hover:border-accent-blue transition-colors flex items-center justify-between"
-                           onClick={() => setShowGalleryPicker({ active: true, onSelect: (url) => { updateSrv('image', url); setShowGalleryPicker({ active: false, onSelect: () => {} }); } })}
-                        >
-                           <span className="truncate">{srv.image || 'Click to select from gallery...'}</span>
-                           <Camera size={16} className="text-gray-500" />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Product/Service Name</label>
-                        <input type="text" value={srv.title} onChange={e => updateSrv('title', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Website Development" />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Price</label>
-                        <input type="text" value={srv.price} onChange={e => updateSrv('price', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="e.g. Starts at $999" />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Dedicated Page Content (Markdown/HTML supported)</label>
-                        <textarea value={srv.content || ''} onChange={e => updateSrv('content', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-64 resize-none font-mono" placeholder="Write full details about this service/product for its dedicated webpage. You can use Markdown or HTML..." />
-                        <p className="text-xs text-gray-500 mt-1">If this is provided, a dedicated webpage for this service will be available.</p>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Short Description</label>
-                        <textarea value={srv.desc} onChange={e => updateSrv('desc', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors h-24 resize-none" placeholder="Short description for the home page card" />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Download Link (URL)</label>
-                        <input type="text" value={srv.link} onChange={e => updateSrv('link', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Live Preview Link (URL) - Optional</label>
-                        <input type="text" value={srv.liveLink || ''} onChange={e => updateSrv('liveLink', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="https://" />
-                      </div>
-                       </>
-                     );
-                  })()}
-                </div>
-              )}
-              
-              {activeTab === 'contact' && (
-                <div className="space-y-6 max-w-2xl">
-                  <h3 className="text-xl font-bold text-white mb-4">Contact Information</h3>
-                  {(() => {
-                    let data = { email: 'ambitiongolu@gmail.com', phone: '+91 8709107808', address: 'Patna, Bihar, India' };
-                    try { if (settings.contact) data = JSON.parse(settings.contact); } catch(e){}
-                    return (
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
-                          <input type="email" value={data.email} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, email: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number / WhatsApp</label>
-                          <input type="text" value={data.phone} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, phone: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-400 mb-2">Address / Location</label>
-                          <input type="text" value={data.address} onChange={e => handleSettingChange('contact', JSON.stringify({ ...data, address: e.target.value }))} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-accent-blue outline-none" />
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-              
-              {activeTab === 'learning' && (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h3 className="text-xl font-bold text-white">Learning Resources</h3>
-                        <p className="text-gray-400 text-xs mt-1">Manage articles, videos, and tutorials.</p>
-                    </div>
-                    <button onClick={() => {
-                      let current = [];
-                      try { current = JSON.parse(settings.learning_hub || '[]'); } catch(e){}
-                      current.push({ title: 'New Resource', type: 'Article', link: '#', desc: 'Description' });
-                      handleSettingChange('learning_hub', JSON.stringify(current));
-                    }} className="bg-accent-blue text-primary-dark px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
-                      <Plus size={16} /> Add Resource
-                    </button>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(JSON.parse(settings.learning_hub || '[]')).map((res, i) => (
-                      <div key={i} className="bg-[#1a1a1a] p-4 rounded-xl border border-white/10 relative group hover:border-accent-blue transition-colors">
-                        <button onClick={() => {
-                          let current = JSON.parse(settings.learning_hub || '[]');
-                          current.splice(i, 1);
-                          handleSettingChange('learning_hub', JSON.stringify(current));
-                        }} className="absolute top-4 right-4 text-gray-500 hover:text-red-400 transition-colors">
-                          <Trash size={16} />
-                        </button>
-                        <div className="space-y-3 pr-8">
-                          <input type="text" value={res.title} onChange={e => {
-                            let current = JSON.parse(settings.learning_hub || '[]');
-                            current[i].title = e.target.value;
-                            handleSettingChange('learning_hub', JSON.stringify(current));
-                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none" placeholder="Resource Title" />
-                          
-                          <select value={res.type} onChange={e => {
-                            let current = JSON.parse(settings.learning_hub || '[]');
-                            current[i].type = e.target.value;
-                            handleSettingChange('learning_hub', JSON.stringify(current));
-                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none">
-                            <option>Article</option>
-                            <option>Video</option>
-                            <option>Course</option>
-                          </select>
-
-                          <input type="text" value={res.link} onChange={e => {
-                            let current = JSON.parse(settings.learning_hub || '[]');
-                            current[i].link = e.target.value;
-                            handleSettingChange('learning_hub', JSON.stringify(current));
-                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none" placeholder="URL Link" />
-
-                          <textarea value={res.desc} onChange={e => {
-                            let current = JSON.parse(settings.learning_hub || '[]');
-                            current[i].desc = e.target.value;
-                            handleSettingChange('learning_hub', JSON.stringify(current));
-                          }} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg p-2 text-sm text-white focus:border-accent-blue outline-none resize-none" placeholder="Short description"></textarea>
-                        </div>
-                      </div>
-                    ))}
-                    {(JSON.parse(settings.learning_hub || '[]')).length === 0 && (
-                      <div className="col-span-full p-8 text-center text-gray-500 bg-black/20 rounded-xl border border-white/5">No learning resources added.</div>
+                    {(JSON.parse(settings.featured_work || '[]')).length === 0 && (
+                      <div className="p-8 text-center text-gray-500 bg-black/20 rounded-xl border border-white/5">No projects added yet.</div>
                     )}
                   </div>
                 </div>
               )}
-
-{activeTab === 'gallery' && (
+              {activeTab === 'gallery' && (
                 <div className="space-y-4">
                   <div className="flex justify-between items-center mb-4">
                     <label className="block text-sm font-medium text-white">Gallery Images</label>
